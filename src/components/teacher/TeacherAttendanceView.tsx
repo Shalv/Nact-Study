@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   UserCheck,
   Calendar,
@@ -13,7 +13,9 @@ import {
   AlertTriangle,
   Info,
   X,
-  FileSpreadsheet
+  FileSpreadsheet,
+  ChevronRight,
+  ExternalLink
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -27,16 +29,27 @@ export interface StudentAttendanceRecord {
 }
 
 export const TeacherAttendanceView: React.FC = () => {
-  const { showToast } = useApp();
+  const { showToast, activeFilter, drillDown } = useApp();
 
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [selectedClass, setSelectedClass] = useState<string>('Class 8-A');
   const [selectedSubject, setSelectedSubject] = useState<string>('Mathematics');
   const [attendanceType, setAttendanceType] = useState<'daily' | 'subject'>('daily');
+  const [statusFilter, setStatusFilter] = useState<'All' | 'Present' | 'Absent' | 'Late' | 'Leave'>('All');
   const [showCorrectionModal, setShowCorrectionModal] = useState(false);
   const [correctionStudent, setCorrectionStudent] = useState<StudentAttendanceRecord | null>(null);
   const [correctionNewStatus, setCorrectionNewStatus] = useState<'Present' | 'Absent' | 'Late' | 'Leave'>('Present');
   const [correctionReason, setCorrectionReason] = useState('');
+
+  // Sync with global drilldown active filter
+  useEffect(() => {
+    if (activeFilter.classGrade) {
+      setSelectedClass(activeFilter.classGrade);
+    }
+    if (activeFilter.status && ['Present', 'Absent', 'Late', 'Leave'].includes(activeFilter.status)) {
+      setStatusFilter(activeFilter.status as any);
+    }
+  }, [activeFilter]);
 
   // Attendance Records
   const [records, setRecords] = useState<StudentAttendanceRecord[]>([
@@ -276,44 +289,88 @@ export const TeacherAttendanceView: React.FC = () => {
         </div>
       </div>
 
-      {/* STAT SUMMARY COUNTERS */}
+      {/* STAT SUMMARY COUNTERS (Interactive Drill-Down Filters) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div
+          onClick={() => setStatusFilter(prev => prev === 'Present' ? 'All' : 'Present')}
+          className={`p-4 rounded-xl border shadow-2xs flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group ${
+            statusFilter === 'Present' ? 'bg-emerald-50 border-emerald-500 ring-2 ring-emerald-400' : 'bg-white border-slate-200 hover:border-emerald-300'
+          }`}
+          title="Click to filter roster by Present students"
+        >
           <div>
-            <span className="text-[11px] font-bold text-slate-400 uppercase">Present</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-bold text-slate-500 uppercase group-hover:text-emerald-700">Present</span>
+              {statusFilter === 'Present' && (
+                <span className="text-[9px] bg-emerald-600 text-white px-1.5 py-0.2 rounded font-mono font-bold">ACTIVE</span>
+              )}
+            </div>
             <div className="text-2xl font-bold font-mono text-emerald-600">{presentCount}</div>
           </div>
-          <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold group-hover:bg-emerald-600 group-hover:text-white transition-colors">
             ✓
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div
+          onClick={() => setStatusFilter(prev => prev === 'Absent' ? 'All' : 'Absent')}
+          className={`p-4 rounded-xl border shadow-2xs flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group ${
+            statusFilter === 'Absent' ? 'bg-rose-50 border-rose-500 ring-2 ring-rose-400' : 'bg-white border-slate-200 hover:border-rose-300'
+          }`}
+          title="Click to filter roster by Absent students"
+        >
           <div>
-            <span className="text-[11px] font-bold text-slate-400 uppercase">Absent</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-bold text-slate-500 uppercase group-hover:text-rose-700">Absent</span>
+              {statusFilter === 'Absent' && (
+                <span className="text-[9px] bg-rose-600 text-white px-1.5 py-0.2 rounded font-mono font-bold">ACTIVE</span>
+              )}
+            </div>
             <div className="text-2xl font-bold font-mono text-rose-600">{absentCount}</div>
           </div>
-          <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+          <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold group-hover:bg-rose-600 group-hover:text-white transition-colors">
             ✗
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div
+          onClick={() => setStatusFilter(prev => prev === 'Late' ? 'All' : 'Late')}
+          className={`p-4 rounded-xl border shadow-2xs flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group ${
+            statusFilter === 'Late' ? 'bg-amber-50 border-amber-500 ring-2 ring-amber-400' : 'bg-white border-slate-200 hover:border-amber-300'
+          }`}
+          title="Click to filter roster by Late students"
+        >
           <div>
-            <span className="text-[11px] font-bold text-slate-400 uppercase">Late Arrival</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-bold text-slate-500 uppercase group-hover:text-amber-700">Late Arrival</span>
+              {statusFilter === 'Late' && (
+                <span className="text-[9px] bg-amber-600 text-white px-1.5 py-0.2 rounded font-mono font-bold">ACTIVE</span>
+              )}
+            </div>
             <div className="text-2xl font-bold font-mono text-amber-600">{lateCount}</div>
           </div>
-          <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+          <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold group-hover:bg-amber-500 group-hover:text-white transition-colors">
             ⏱️
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div
+          onClick={() => setStatusFilter(prev => prev === 'Leave' ? 'All' : 'Leave')}
+          className={`p-4 rounded-xl border shadow-2xs flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group ${
+            statusFilter === 'Leave' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-400' : 'bg-white border-slate-200 hover:border-blue-300'
+          }`}
+          title="Click to filter roster by Approved Leave"
+        >
           <div>
-            <span className="text-[11px] font-bold text-slate-400 uppercase">Approved Leave</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-bold text-slate-500 uppercase group-hover:text-blue-700">Approved Leave</span>
+              {statusFilter === 'Leave' && (
+                <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-mono font-bold">ACTIVE</span>
+              )}
+            </div>
             <div className="text-2xl font-bold font-mono text-blue-600">{leaveCount}</div>
           </div>
-          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold group-hover:bg-blue-600 group-hover:text-white transition-colors">
             📝
           </div>
         </div>
@@ -321,8 +378,23 @@ export const TeacherAttendanceView: React.FC = () => {
 
       {/* ATTENDANCE ROSTER TABLE */}
       <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 text-xs font-semibold text-slate-700">
-          <span>Student Roster ({records.length} enrolled)</span>
+        <div className="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 bg-slate-50 text-xs font-semibold text-slate-700">
+          <div className="flex items-center gap-2">
+            <span>Student Roster ({records.length} enrolled)</span>
+            {statusFilter !== 'All' && (
+              <div className="flex items-center gap-1 px-2 py-0.5 bg-indigo-100 text-indigo-900 rounded-full font-bold text-[11px]">
+                <Filter className="w-3 h-3 text-indigo-600" />
+                <span>Filtered: {statusFilter} ({records.filter(r => r.status === statusFilter).length})</span>
+                <button
+                  onClick={() => setStatusFilter('All')}
+                  className="ml-1 text-indigo-600 hover:text-indigo-950 cursor-pointer"
+                  title="Clear filter"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+          </div>
           <span className="text-slate-500 font-mono">{selectedClass} • {selectedDate}</span>
         </div>
 
@@ -337,8 +409,15 @@ export const TeacherAttendanceView: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {records.map(r => (
-              <tr key={r.id} className="hover:bg-slate-50/50">
+            {records
+              .filter(r => statusFilter === 'All' || r.status === statusFilter)
+              .map(r => (
+              <tr
+                key={r.id}
+                onClick={() => drillDown('students', { originLabel: `${selectedClass} Attendance`, title: `Student Profile: ${r.name}`, filter: { studentName: r.name, classGrade: selectedClass } })}
+                className="hover:bg-indigo-50/70 cursor-pointer transition-colors group"
+                title={`Click to view ${r.name}'s comprehensive student record`}
+              >
                 <td className="p-3 font-mono font-bold text-slate-700">
                   {r.rollNo}
                 </td>
@@ -350,10 +429,13 @@ export const TeacherAttendanceView: React.FC = () => {
                       referrerPolicy="no-referrer"
                       className="w-7 h-7 rounded-full object-cover border border-slate-200"
                     />
-                    <span className="font-bold text-slate-900">{r.name}</span>
+                    <div className="flex items-center gap-1.5 font-bold text-slate-900 group-hover:text-indigo-700">
+                      <span>{r.name}</span>
+                      <ChevronRight className="w-3 h-3 text-slate-300 group-hover:text-indigo-600 transition-colors" />
+                    </div>
                   </div>
                 </td>
-                <td className="p-3">
+                <td className="p-3" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-center gap-1.5">
                     {(['Present', 'Absent', 'Late', 'Leave'] as const).map(status => {
                       const isSelected = r.status === status;

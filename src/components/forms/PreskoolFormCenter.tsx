@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ExternalLink,
   GraduationCap,
@@ -43,11 +43,21 @@ export const PreskoolFormCenter: React.FC = () => {
     addMasterItem,
     setActiveModule,
     instituteProfile,
+    activeFilter,
   } = useApp();
 
   const [activeFormTab, setActiveFormTab] = useState<
     'student' | 'teacher' | 'course' | 'fees' | 'exam' | 'inquiry'
   >('student');
+
+  useEffect(() => {
+    if (activeFilter.formTab) {
+      const tab = activeFilter.formTab;
+      if (['student', 'teacher', 'course', 'fees', 'exam', 'inquiry'].includes(tab)) {
+        setActiveFormTab(tab as any);
+      }
+    }
+  }, [activeFilter]);
 
   // Quick Master Option Modal State
   const [quickMasterCategory, setQuickMasterCategory] = useState<keyof SystemMasters | null>(null);
@@ -265,7 +275,7 @@ export const PreskoolFormCenter: React.FC = () => {
       city: inquiryForm.city,
       state: 'Telangana',
       source: 'Meta Ads',
-      campaign: 'PreSkool_Detailed_Inquiry_Form',
+      campaign: 'Institutional_Inquiry_Form',
       interestedProduct: inquiryForm.targetCourse,
       productId: 'crs-1',
       productType: 'Course',
@@ -322,82 +332,82 @@ export const PreskoolFormCenter: React.FC = () => {
         </div>
       </div>
 
-      {/* Form Navigation Tabs (PreSkool Detailed Form Templates) */}
+      {/* Form Navigation Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
         <button
           onClick={() => setActiveFormTab('student')}
-          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap ${
+          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeFormTab === 'student'
               ? 'bg-[#3d5ee1] text-white shadow-2xs'
               : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           <GraduationCap className="w-4 h-4" />
-          <span>Student Admission Form (add-student.html)</span>
+          <span>Student Admission Form</span>
         </button>
 
         <button
           onClick={() => setActiveFormTab('teacher')}
-          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap ${
+          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeFormTab === 'teacher'
               ? 'bg-[#3d5ee1] text-white shadow-2xs'
               : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           <UserCheck className="w-4 h-4" />
-          <span>Teacher Onboarding (add-teacher.html)</span>
+          <span>Teacher Onboarding</span>
         </button>
 
         <button
           onClick={() => setActiveFormTab('course')}
-          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap ${
+          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeFormTab === 'course'
               ? 'bg-[#3d5ee1] text-white shadow-2xs'
               : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           <BookOpen className="w-4 h-4" />
-          <span>Course / Class Master (add-class.html)</span>
+          <span>Course & Class Master</span>
         </button>
 
         <button
           onClick={() => setActiveFormTab('fees')}
-          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap ${
+          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeFormTab === 'fees'
               ? 'bg-[#3d5ee1] text-white shadow-2xs'
               : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           <CreditCard className="w-4 h-4" />
-          <span>Fees Collection (fees-collections.html)</span>
+          <span>Fees Collection</span>
         </button>
 
         <button
           onClick={() => setActiveFormTab('exam')}
-          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap ${
+          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeFormTab === 'exam'
               ? 'bg-[#3d5ee1] text-white shadow-2xs'
               : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           <Award className="w-4 h-4" />
-          <span>Exam Schedule (add-exam.html)</span>
+          <span>Exam Schedule</span>
         </button>
 
         <button
           onClick={() => setActiveFormTab('inquiry')}
-          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap ${
+          className={`px-3.5 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeFormTab === 'inquiry'
               ? 'bg-[#3d5ee1] text-white shadow-2xs'
               : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           <Contact className="w-4 h-4" />
-          <span>Admissions Inquiry & CRM Lead (add-lead.html)</span>
+          <span>Admissions Inquiry & CRM Leads</span>
         </button>
       </div>
 
-      {/* FORM 1: Student Admission Form (PreSkool Detailed Form Style with 5 Multi-Part Sections) */}
+      {/* FORM 1: Student Admission Form with 5 Multi-Part Sections */}
       {activeFormTab === 'student' && (
         <form onSubmit={handleSaveStudent} className="space-y-6">
           {/* Card 1: Student Basic Information */}
@@ -412,7 +422,7 @@ export const PreskoolFormCenter: React.FC = () => {
                   <p className="text-[11px] text-slate-500">Official identity, contact, blood group, and category</p>
                 </div>
               </div>
-              <span className="font-mono text-xs text-slate-400">PreSkool Reference: add-student.html</span>
+              <span className="font-mono text-xs text-slate-400">Official Form: Student Admission & Bio-data</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
@@ -804,7 +814,7 @@ export const PreskoolFormCenter: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Faculty & Academic Staff Onboarding</h3>
-                <p className="text-[11px] text-slate-500">PreSkool Reference: add-teacher.html</p>
+                <p className="text-[11px] text-slate-500">Official Form: Faculty & Academic Staff Profile</p>
               </div>
               <span className="font-mono text-xs text-slate-400">ID: {teacherForm.teacherId}</span>
             </div>
@@ -938,7 +948,7 @@ export const PreskoolFormCenter: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Course & Class Curriculum Specification</h3>
-                <p className="text-[11px] text-slate-500">PreSkool Reference: add-course.html / add-class.html</p>
+                <p className="text-[11px] text-slate-500">Official Form: Course Curriculum & Class Master</p>
               </div>
             </div>
 
@@ -1037,7 +1047,7 @@ export const PreskoolFormCenter: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Fee Collection & Automated Receipt Dispatch</h3>
-                <p className="text-[11px] text-slate-500">PreSkool Reference: fees-collections.html</p>
+                <p className="text-[11px] text-slate-500">Official Form: Student Fee Collections & Receipts</p>
               </div>
               <span className="font-mono text-emerald-600 font-bold">UPI / Gateway Live</span>
             </div>
@@ -1179,7 +1189,7 @@ export const PreskoolFormCenter: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Examination Schedule & Room Allocation</h3>
-                <p className="text-[11px] text-slate-500">PreSkool Reference: add-exam.html / exam-routine.html</p>
+                <p className="text-[11px] text-slate-500">Official Form: Examination Blueprint & Routine</p>
               </div>
             </div>
 
@@ -1297,7 +1307,7 @@ export const PreskoolFormCenter: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-slate-900 text-sm">Admissions Inquiry & Lead Registration</h3>
-                <p className="text-[11px] text-slate-500">PreSkool Reference: add-lead.html / Inquiries Register</p>
+                <p className="text-[11px] text-slate-500">Official Form: Admissions Inquiries & CRM Leads</p>
               </div>
             </div>
 

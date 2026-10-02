@@ -52,6 +52,14 @@ export interface AppNotification {
   type: 'lead' | 'payment' | 'academic' | 'automation';
 }
 
+export interface NavigationHistoryItem {
+  module: string;
+  label: string;
+  filter?: Record<string, any>;
+  title?: string;
+  timestamp?: number;
+}
+
 interface AppContextType {
   currentUser: AppUser;
   setCurrentUser: (user: AppUser) => void;
@@ -59,6 +67,20 @@ interface AppContextType {
   setCurrentRole: (role: UserRole) => void;
   activeModule: string;
   setActiveModule: (module: string) => void;
+  navigationHistory: NavigationHistoryItem[];
+  activeFilter: Record<string, any>;
+  drillDown: (
+    targetModule: string,
+    options?: {
+      label?: string;
+      originLabel?: string;
+      filter?: Record<string, any>;
+      title?: string;
+    }
+  ) => void;
+  goBack: () => void;
+  clearActiveFilter: () => void;
+  setActiveFilterValue: (key: string, value: any) => void;
   isLoggedIn: boolean;
   login: (usernameOrEmail: string, password?: string) => Promise<boolean> | boolean;
   logout: () => Promise<void> | void;
@@ -131,6 +153,68 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const [currentRole, setCurrentRole] = useState<UserRole>('Super Admin');
   const [activeModule, setActiveModule] = useState<string>('dashboard');
+  const [navigationHistory, setNavigationHistory] = useState<NavigationHistoryItem[]>([]);
+  const [activeFilter, setActiveFilter] = useState<Record<string, any>>({});
+
+  const drillDown = (
+    targetModule: string,
+    options?: {
+      label?: string;
+      originLabel?: string;
+      filter?: Record<string, any>;
+      title?: string;
+    }
+  ) => {
+    // Generate origin label based on current activeModule & portal
+    const defaultOriginLabel =
+      activeModule === 'dashboard'
+        ? currentUser.portalType === 'teacher'
+          ? 'Teacher Dashboard'
+          : currentUser.portalType === 'student'
+          ? 'Student Dashboard'
+          : 'Admin Dashboard'
+        : activeModule
+            .split('-')
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ');
+
+    const prevItem: NavigationHistoryItem = {
+      module: activeModule,
+      label: options?.originLabel || defaultOriginLabel,
+      filter: { ...activeFilter },
+      title: options?.title,
+      timestamp: Date.now(),
+    };
+
+    setNavigationHistory(prev => [...prev, prevItem]);
+    setActiveFilter(options?.filter || {});
+    setActiveModule(targetModule);
+    if (options?.title) {
+      showToast(`Viewing: ${options.title}`, 'info');
+    }
+  };
+
+  const goBack = () => {
+    if (navigationHistory.length === 0) {
+      setActiveModule('dashboard');
+      setActiveFilter({});
+      return;
+    }
+    const previous = navigationHistory[navigationHistory.length - 1];
+    setNavigationHistory(prev => prev.slice(0, prev.length - 1));
+    setActiveModule(previous.module);
+    setActiveFilter(previous.filter || {});
+    showToast(`Returned to ${previous.label}`, 'info');
+  };
+
+  const clearActiveFilter = () => {
+    setActiveFilter({});
+    showToast('Filters cleared', 'info');
+  };
+
+  const setActiveFilterValue = (key: string, value: any) => {
+    setActiveFilter(prev => ({ ...prev, [key]: value }));
+  };
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -954,6 +1038,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setCurrentRole,
         activeModule,
         setActiveModule,
+        navigationHistory,
+        activeFilter,
+        drillDown,
+        goBack,
+        clearActiveFilter,
+        setActiveFilterValue,
         isLoggedIn,
         login,
         logout,

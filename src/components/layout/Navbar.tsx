@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
       case 'dashboard':
         return { category: 'Dashboard', page: 'Executive Overview' };
       case 'preskool-dashboard':
-        return { category: 'Dashboard', page: 'Preskool Academic Hub' };
+        return { category: 'Dashboard', page: 'Institutional Academic Hub' };
       case 'users':
         return { category: 'Master', page: 'Users & Roles Management' };
       case 'user-rights':
@@ -55,8 +55,9 @@ export const Navbar: React.FC = () => {
         return { category: 'Operations', page: 'Student Admission Form' };
       case 'students':
         return { category: 'Operations', page: 'Student Records Directory' };
+      case 'form-center':
       case 'preskool-forms':
-        return { category: 'Operations', page: 'Preskool Multi-Form Center' };
+        return { category: 'Operations', page: 'Operations Multi-Form Center' };
       case 'attendance':
         return { category: 'Operations', page: 'Daily Attendance Register' };
       case 'lms':

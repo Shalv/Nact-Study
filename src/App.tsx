@@ -26,10 +26,12 @@ import { SettingsMasterDataModule } from './components/settings/SettingsMasterDa
 import { PreskoolFormCenter } from './components/forms/PreskoolFormCenter';
 import { PreskoolIndexDashboard } from './components/preskool/PreskoolIndexDashboard';
 import { MasterDataCenter } from './components/masters/MasterDataCenter';
+import { TeacherAttendanceView } from './components/teacher/TeacherAttendanceView';
 import { AdminRoleDashboard } from './components/dashboard/AdminRoleDashboard';
 import { TeacherRoleDashboard } from './components/dashboard/TeacherRoleDashboard';
 import { StudentRoleDashboard } from './components/dashboard/StudentRoleDashboard';
 import { AccessDeniedBanner } from './components/common/AccessDeniedBanner';
+import { DrillDownBreadcrumbBar } from './components/common/DrillDownBreadcrumbBar';
 import { CheckCircle2, AlertCircle, Info } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -133,10 +135,12 @@ const AppContent: React.FC = () => {
       case 'rbac':
         return <UserRightsManager />;
       case 'student-admission':
+      case 'form-center':
       case 'preskool-forms':
       case 'fees':
         return <PreskoolFormCenter />;
       case 'attendance':
+        return <TeacherAttendanceView />;
       case 'students':
         return <StudentManagementModule />;
       case 'masters':
@@ -180,8 +184,11 @@ const AppContent: React.FC = () => {
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar controls the entire application */}
         <Sidebar />
-        <main className="flex-1 overflow-y-auto">
-          {renderActiveView()}
+        <main className="flex-1 overflow-y-auto flex flex-col">
+          <DrillDownBreadcrumbBar />
+          <div className="flex-1">
+            {renderActiveView()}
+          </div>
         </main>
       </div>
 

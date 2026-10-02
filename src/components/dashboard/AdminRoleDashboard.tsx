@@ -33,7 +33,7 @@ import {
 import { useApp } from '../../context/AppContext';
 
 export const AdminRoleDashboard: React.FC = () => {
-  const { setActiveModule, showToast, addActivityLog, currentUser, leads, courses, orders } = useApp();
+  const { setActiveModule, showToast, addActivityLog, currentUser, leads, courses, orders, drillDown } = useApp();
 
   const [dateRange, setDateRange] = useState('Academic Year 2026-27');
   const [selectedClassFilter, setSelectedClassFilter] = useState('All Classes');
@@ -136,82 +136,116 @@ export const AdminRoleDashboard: React.FC = () => {
       {/* 2. Primary KPI Cards Grid (Total Students, Admissions, Teachers & Staff, Attendance, Fees & Outstanding) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
         {/* Total Students */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-blue-300 transition-all">
+        <div
+          onClick={() => drillDown('students', { originLabel: 'Admin Dashboard', title: 'All Enrolled Students (50,055)', filter: { classGrade: 'All' } })}
+          className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-blue-500 hover:shadow-md cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group relative"
+          title="Click to view all enrolled students roster"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Students</span>
-            <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider group-hover:text-blue-600 transition-colors">Total Students</span>
+            <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
               <GraduationCap className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <div className="text-2xl font-black text-slate-900">50,055</div>
-            <div className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
-              <TrendingUp className="w-3 h-3" />
-              <span>+12.4% vs last term</span>
+            <div className="text-2xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">50,055</div>
+            <div className="text-[10px] text-emerald-600 font-semibold flex items-center justify-between mt-0.5">
+              <div className="flex items-center gap-1">
+                <TrendingUp className="w-3 h-3" />
+                <span>+12.4% vs last term</span>
+              </div>
+              <span className="text-[9px] font-mono text-slate-400 group-hover:text-blue-600">View List →</span>
             </div>
           </div>
         </div>
 
         {/* Admissions */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-emerald-300 transition-all">
+        <div
+          onClick={() => drillDown('student-admission', { originLabel: 'Admin Dashboard', title: 'Admissions & Inquiries Funnel (2,450 YTD)', filter: { formTab: 'inquiry', stage: 'pipeline' } })}
+          className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-emerald-500 hover:shadow-md cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group relative"
+          title="Click to view admissions & inquiry desk"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Admissions (YTD)</span>
-            <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider group-hover:text-emerald-700 transition-colors">Admissions (YTD)</span>
+            <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
               <UserPlus className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <div className="text-2xl font-black text-slate-900">2,450</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">
-              <strong className="text-emerald-700">820</strong> in pipeline
+            <div className="text-2xl font-black text-slate-900 group-hover:text-emerald-700 transition-colors">2,450</div>
+            <div className="text-[10px] text-slate-500 flex items-center justify-between mt-0.5">
+              <span><strong className="text-emerald-700">820</strong> in pipeline</span>
+              <span className="text-[9px] font-mono text-slate-400 group-hover:text-emerald-700">View Roster →</span>
             </div>
           </div>
         </div>
 
         {/* Teachers & Staff */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-purple-300 transition-all">
+        <div
+          onClick={() => drillDown('users', { originLabel: 'Admin Dashboard', title: 'Faculty & Administrative Staff Directory', filter: { role: 'Faculty' } })}
+          className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-purple-500 hover:shadow-md cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group relative"
+          title="Click to view teacher and staff directory"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Faculty & Staff</span>
-            <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider group-hover:text-purple-700 transition-colors">Faculty & Staff</span>
+            <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors">
               <Users className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <div className="text-2xl font-black text-slate-900">145 / 42</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">
-              145 Teachers • 42 Admin Staff
+            <div className="text-2xl font-black text-slate-900 group-hover:text-purple-700 transition-colors">145 / 42</div>
+            <div className="text-[10px] text-slate-500 flex items-center justify-between mt-0.5">
+              <span>145 Teachers • 42 Staff</span>
+              <span className="text-[9px] font-mono text-slate-400 group-hover:text-purple-700">Staff List →</span>
             </div>
           </div>
         </div>
 
         {/* Daily Attendance Rate */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-indigo-300 transition-all">
+        <div
+          onClick={() => drillDown('attendance', { originLabel: 'Admin Dashboard', title: "Today's Class Attendance Summary (95.4%)", filter: { attendanceType: 'daily', status: 'All' } })}
+          className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-indigo-500 hover:shadow-md cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group relative"
+          title="Click to view daily attendance sheet"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Daily Attendance</span>
-            <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider group-hover:text-indigo-700 transition-colors">Daily Attendance</span>
+            <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
               <UserCheck className="w-4 h-4" />
             </div>
           </div>
           <div>
             <div className="text-2xl font-black text-indigo-600">95.4%</div>
-            <div className="text-[10px] text-emerald-600 font-semibold mt-0.5">
-              47,750 Present Today
+            <div className="text-[10px] text-emerald-600 font-semibold flex items-center justify-between mt-0.5">
+              <span>47,750 Present Today</span>
+              <span className="text-[9px] font-mono text-slate-400 group-hover:text-indigo-700">Attendance →</span>
             </div>
           </div>
         </div>
 
         {/* Fees & Outstanding */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-amber-300 transition-all">
+        <div
+          onClick={() => drillDown('fees', { originLabel: 'Admin Dashboard', title: 'Fee Collection Ledger & Reports', filter: { formTab: 'fees', feeStatus: 'Paid' } })}
+          className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between space-y-2 hover:border-amber-500 hover:shadow-md cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] group relative"
+          title="Click to view collection report"
+        >
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Fees & Collection</span>
-            <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider group-hover:text-amber-700 transition-colors">Fees & Collection</span>
+            <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors">
               <CreditCard className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <div className="text-2xl font-black text-slate-900">₹24.5L</div>
-            <div className="text-[10px] text-rose-600 font-semibold mt-0.5">
-              ₹3.2L Outstanding (88% Cleared)
+            <div className="text-2xl font-black text-slate-900 group-hover:text-amber-700 transition-colors">₹24.5L</div>
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                drillDown('fees', { originLabel: 'Admin Dashboard', title: 'Outstanding Student Fees Ledger (₹3.2L)', filter: { formTab: 'fees', feeStatus: 'Outstanding' } });
+              }}
+              className="text-[10px] text-rose-600 font-semibold mt-0.5 flex items-center justify-between hover:underline"
+              title="Click to filter by Outstanding fees only"
+            >
+              <span>₹3.2L Outstanding</span>
+              <span className="text-[9px] bg-rose-50 text-rose-700 px-1 py-0.2 rounded font-mono font-bold">Due List →</span>
             </div>
           </div>
         </div>
@@ -249,13 +283,48 @@ export const AdminRoleDashboard: React.FC = () => {
                   { name: 'Class 10-A', teacher: 'Dr. Alok Verma', students: 34, att: '97.2%', gpa: '89.6%', fees: '96% Paid' },
                   { name: 'Class 11-Science', teacher: 'Rajesh Nair', students: 40, att: '93.5%', gpa: '84.0%', fees: '90% Paid' },
                 ].map(c => (
-                  <tr key={c.name} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-2.5 px-3 font-bold text-slate-900">{c.name}</td>
-                    <td className="py-2.5 px-3 text-slate-600">{c.teacher}</td>
-                    <td className="py-2.5 px-3 text-center font-mono">{c.students}</td>
-                    <td className="py-2.5 px-3 text-center font-semibold text-emerald-600">{c.att}</td>
-                    <td className="py-2.5 px-3 text-center font-bold text-indigo-600">{c.gpa}</td>
-                    <td className="py-2.5 px-3 text-right font-medium text-slate-700">{c.fees}</td>
+                  <tr
+                    key={c.name}
+                    onClick={() => drillDown('students', { originLabel: 'Admin Dashboard', title: `${c.name} Students & Academic Profile`, filter: { classGrade: c.name } })}
+                    className="hover:bg-indigo-50/80 cursor-pointer transition-colors group"
+                    title={`Click to drill down into ${c.name} student roster and academic records`}
+                  >
+                    <td className="py-2.5 px-3 font-bold text-slate-900 group-hover:text-[#3d5ee1] flex items-center justify-between">
+                      <span>{c.name}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#3d5ee1] group-hover:translate-x-0.5 transition-all" />
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-600 group-hover:text-slate-900">{c.teacher}</td>
+                    <td className="py-2.5 px-3 text-center font-mono font-semibold text-slate-700">{c.students}</td>
+                    <td
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        drillDown('attendance', { originLabel: 'Admin Dashboard', title: `${c.name} Attendance Record (${c.att})`, filter: { classGrade: c.name, attendanceRate: c.att } });
+                      }}
+                      className="py-2.5 px-3 text-center font-semibold text-emerald-600 hover:underline"
+                      title={`Click to view ${c.name} attendance report`}
+                    >
+                      {c.att}
+                    </td>
+                    <td
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        drillDown('reports', { originLabel: 'Admin Dashboard', title: `${c.name} Academic Performance (${c.gpa})`, filter: { classGrade: c.name, reportType: 'academic' } });
+                      }}
+                      className="py-2.5 px-3 text-center font-bold text-indigo-600 hover:underline"
+                      title={`Click to view ${c.name} marks & grade breakdown`}
+                    >
+                      {c.gpa}
+                    </td>
+                    <td
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        drillDown('fees', { originLabel: 'Admin Dashboard', title: `${c.name} Fee Dues & Status (${c.fees})`, filter: { classGrade: c.name, formTab: 'fees' } });
+                      }}
+                      className="py-2.5 px-3 text-right font-medium text-slate-700 hover:text-indigo-600 hover:underline"
+                      title={`Click to view ${c.name} fee records`}
+                    >
+                      {c.fees}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -281,10 +350,18 @@ export const AdminRoleDashboard: React.FC = () => {
               { grade: 'Passing Grade (C 60-69%)', count: '3,100 Students', pct: 6.2, color: 'bg-amber-500' },
               { grade: 'Remedial Focus (<60%)', count: '1,575 Students', pct: 3.1, color: 'bg-rose-500' },
             ].map(item => (
-              <div key={item.grade} className="space-y-1">
+              <div
+                key={item.grade}
+                onClick={() => drillDown('students', { originLabel: 'Admin Dashboard', title: `Students with ${item.grade} (${item.count})`, filter: { gpaGrade: item.grade } })}
+                className="space-y-1 p-2 rounded-xl hover:bg-indigo-50/60 cursor-pointer transition-all hover:scale-[1.01] group border border-transparent hover:border-indigo-200"
+                title={`Click to view students in ${item.grade}`}
+              >
                 <div className="flex items-center justify-between text-[11px] font-medium">
-                  <span className="text-slate-700">{item.grade}</span>
-                  <span className="text-slate-500 font-mono">{item.count} ({item.pct}%)</span>
+                  <span className="text-slate-700 font-semibold group-hover:text-indigo-800 flex items-center gap-1.5">
+                    <span>{item.grade}</span>
+                    <ChevronRight className="w-3 h-3 text-slate-300 group-hover:text-indigo-600 transition-colors" />
+                  </span>
+                  <span className="text-slate-500 font-mono group-hover:text-indigo-900">{item.count} ({item.pct}%)</span>
                 </div>
                 <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div className={`h-full ${item.color} rounded-full`} style={{ width: `${item.pct}%` }} />
@@ -296,10 +373,10 @@ export const AdminRoleDashboard: React.FC = () => {
           <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
             <span className="text-slate-500">School Overall Mean GPA: <strong>84.2%</strong></span>
             <button
-              onClick={() => setActiveModule('reports')}
-              className="text-[#3d5ee1] font-bold hover:underline flex items-center gap-1"
+              onClick={() => drillDown('reports', { originLabel: 'Admin Dashboard', title: 'Comprehensive Academic Analytics & MIS Report', filter: { reportType: 'academic' } })}
+              className="text-[#3d5ee1] font-bold hover:underline flex items-center gap-1 cursor-pointer"
             >
-              <span>Full Analytics</span>
+              <span>Full Analytics Report</span>
               <ArrowRight className="w-3 h-3" />
             </button>
           </div>
@@ -330,23 +407,38 @@ export const AdminRoleDashboard: React.FC = () => {
               {pendingApprovals.map(item => (
                 <div
                   key={item.id}
-                  className="p-3.5 bg-slate-50 hover:bg-white rounded-xl border border-slate-200 hover:border-indigo-300 transition-all flex items-start justify-between gap-3 text-xs"
+                  onClick={() => {
+                    if (item.type.includes('Leave')) {
+                      drillDown('teacher-leave', { originLabel: 'Admin Dashboard', title: `Duty Leave Approval (${item.applicant})`, filter: { applicant: item.applicant } });
+                    } else if (item.type.includes('Paper')) {
+                      drillDown('teacher-exam-builder', { originLabel: 'Admin Dashboard', title: `Question Paper Moderation (${item.applicant})`, filter: { applicant: item.applicant } });
+                    } else if (item.type.includes('Waiver')) {
+                      drillDown('student-admission', { originLabel: 'Admin Dashboard', title: `Fee Concession Approval (${item.applicant})`, filter: { formTab: 'student' } });
+                    } else {
+                      drillDown('masters', { originLabel: 'Admin Dashboard', title: `Procurement & Budget (${item.applicant})`, filter: { category: 'departments' } });
+                    }
+                  }}
+                  className="p-3.5 bg-slate-50 hover:bg-indigo-50/70 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all flex items-start justify-between gap-3 text-xs cursor-pointer group"
+                  title="Click to view full approval record and document"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-slate-900">{item.type}</span>
+                      <span className="font-bold text-slate-900 group-hover:text-indigo-800">{item.type}</span>
                       <span className="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.2 rounded font-semibold">
                         {item.applicant} ({item.role})
                       </span>
                     </div>
                     <p className="text-slate-600 text-[11px]">{item.details}</p>
-                    <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      <span>{item.date}</span>
+                    <div className="text-[10px] text-slate-400 font-mono flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        <span>{item.date}</span>
+                      </div>
+                      <span className="text-[9px] text-indigo-600 font-bold group-hover:underline">Review Details →</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0 pt-1">
+                  <div className="flex items-center gap-1.5 shrink-0 pt-1" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => handleApprove(item.id, item.type, item.applicant)}
                       className="p-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-2xs transition-colors"
@@ -375,28 +467,40 @@ export const AdminRoleDashboard: React.FC = () => {
               <Clock className="w-4 h-4 text-[#3d5ee1]" />
               <h3 className="font-bold text-slate-900 text-sm">Real-time Faculty & Staff Activity Log</h3>
             </div>
-            <span className="text-xs text-slate-500">Live Campus Stream</span>
+            <button
+              onClick={() => drillDown('reports', { originLabel: 'Admin Dashboard', title: 'Complete System Activity & Audit Trail', filter: { reportType: 'activity' } })}
+              className="text-xs font-bold text-[#3d5ee1] hover:underline flex items-center gap-1"
+            >
+              <span>Audit Trail</span>
+              <ArrowRight className="w-3 h-3" />
+            </button>
           </div>
 
           <div className="space-y-3">
             {[
-              { teacher: 'Vikramaditya Roy', role: 'Math Faculty', action: 'Published Exercise 2.3 Homework & Rubric for Class 8-A', time: '12 mins ago', badge: 'Homework' },
-              { teacher: 'Dr. Sunita Rao', role: 'Examination Controller', action: 'Approved Term 1 Question Paper blueprint for Class 10 Physics', time: '35 mins ago', badge: 'Exams' },
-              { teacher: 'Priyanka Sen', role: 'Science Faculty', action: 'Marked Daily Roll Call for Class 8-B (29 Present, 1 Absent)', time: '1 hour ago', badge: 'Attendance' },
-              { teacher: 'Rajesh Nair', role: 'HOD Physics', action: 'Uploaded Lecture Slides & Laser Bench Videos for Class 9 Optics', time: '2 hours ago', badge: 'Materials' },
-              { teacher: 'Admissions Office', role: 'Registrar', action: 'Enrolled Aarav Patel & Sneha Kulkarni into 2026-27 Academic Roster', time: '3 hours ago', badge: 'Admissions' },
+              { teacher: 'Vikramaditya Roy', role: 'Math Faculty', action: 'Published Exercise 2.3 Homework & Rubric for Class 8-A', time: '12 mins ago', badge: 'Homework', target: 'teacher-assignments' },
+              { teacher: 'Dr. Sunita Rao', role: 'Examination Controller', action: 'Approved Term 1 Question Paper blueprint for Class 10 Physics', time: '35 mins ago', badge: 'Exams', target: 'teacher-exam-builder' },
+              { teacher: 'Priyanka Sen', role: 'Science Faculty', action: 'Marked Daily Roll Call for Class 8-B (29 Present, 1 Absent)', time: '1 hour ago', badge: 'Attendance', target: 'attendance' },
+              { teacher: 'Rajesh Nair', role: 'HOD Physics', action: 'Uploaded Lecture Slides & Laser Bench Videos for Class 9 Optics', time: '2 hours ago', badge: 'Materials', target: 'teacher-materials' },
+              { teacher: 'Admissions Office', role: 'Registrar', action: 'Enrolled Aarav Patel & Sneha Kulkarni into 2026-27 Academic Roster', time: '3 hours ago', badge: 'Admissions', target: 'students' },
             ].map((act, i) => (
-              <div key={i} className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-                <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-[10px] shrink-0">
+              <div
+                key={i}
+                onClick={() => drillDown(act.target, { originLabel: 'Admin Dashboard', title: `${act.badge}: ${act.teacher}`, filter: { role: act.role } })}
+                className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-indigo-50/70 cursor-pointer transition-all border border-transparent hover:border-indigo-100 group"
+                title={`Click to drill down into ${act.badge} records`}
+              >
+                <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-[10px] shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                   {act.teacher[0]}
                 </div>
                 <div className="flex-1 space-y-0.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900 text-xs">{act.teacher}</span>
+                    <span className="font-bold text-slate-900 text-xs group-hover:text-indigo-800">{act.teacher}</span>
                     <span className="text-[10px] text-slate-400 font-mono">{act.time}</span>
                   </div>
                   <p className="text-[11px] text-slate-600 leading-snug">{act.action}</p>
                 </div>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-indigo-600 transition-colors self-center" />
               </div>
             ))}
           </div>
@@ -412,7 +516,13 @@ export const AdminRoleDashboard: React.FC = () => {
               <Calendar className="w-4 h-4 text-indigo-600" />
               <h3 className="font-bold text-slate-900 text-sm">Upcoming Institutional Academic Events</h3>
             </div>
-            <span className="text-xs text-slate-500">October 2026</span>
+            <button
+              onClick={() => drillDown('teacher-timetable', { originLabel: 'Admin Dashboard', title: 'Full Academic Timetable & Calendar' })}
+              className="text-xs font-bold text-[#3d5ee1] hover:underline flex items-center gap-1"
+            >
+              <span>Full Calendar</span>
+              <ArrowRight className="w-3 h-3" />
+            </button>
           </div>
 
           <div className="space-y-3">
@@ -421,17 +531,25 @@ export const AdminRoleDashboard: React.FC = () => {
               { title: 'CBSE Regional Science & Math Exhibition', date: 'Oct 19, 2026', time: '10:00 AM - 04:00 PM', hall: 'Main Auditorium', type: 'Exhibition', color: 'border-l-4 border-l-indigo-500' },
               { title: 'Parent-Teacher Academic Review Meeting (Term 1)', date: 'Oct 24, 2026', time: '08:30 AM - 01:30 PM', hall: 'Assigned Classrooms', type: 'PTM', color: 'border-l-4 border-l-amber-500' },
             ].map((evt, i) => (
-              <div key={i} className={`p-3 bg-slate-50 rounded-xl border border-slate-200 ${evt.color} space-y-1`}>
+              <div
+                key={i}
+                onClick={() => drillDown('teacher-timetable', { originLabel: 'Admin Dashboard', title: `Event Details: ${evt.title}`, filter: { eventType: evt.type } })}
+                className={`p-3 bg-slate-50 hover:bg-white rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-xs cursor-pointer transition-all ${evt.color} space-y-1 group`}
+                title="Click to view event schedule and details"
+              >
                 <div className="flex items-center justify-between font-bold text-slate-900 text-xs">
-                  <span>{evt.title}</span>
+                  <span className="group-hover:text-indigo-700">{evt.title}</span>
                   <span className="text-[10px] font-mono text-indigo-600 bg-white px-2 py-0.5 rounded border border-slate-200">
                     {evt.type}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-[11px] text-slate-500 font-mono">
-                  <span>{evt.date} • {evt.time}</span>
-                  <span>|</span>
-                  <span>{evt.hall}</span>
+                <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                  <div className="flex items-center gap-3">
+                    <span>{evt.date} • {evt.time}</span>
+                    <span>|</span>
+                    <span>{evt.hall}</span>
+                  </div>
+                  <span className="text-[9px] text-indigo-600 font-bold group-hover:underline">Schedule Details →</span>
                 </div>
               </div>
             ))}
@@ -446,19 +564,24 @@ export const AdminRoleDashboard: React.FC = () => {
               <h3 className="font-bold text-slate-900 text-sm">Notices & Campus Circulars</h3>
             </div>
             <button
-              onClick={() => showToast('Opened Circular Composer.')}
+              onClick={() => drillDown('teacher-announcements', { originLabel: 'Admin Dashboard', title: 'All Campus Announcements & Notices' })}
               className="text-xs font-bold text-[#3d5ee1] hover:underline flex items-center gap-1"
             >
-              <Plus className="w-3 h-3" />
-              <span>Publish Notice</span>
+              <span>All Notices</span>
+              <ArrowRight className="w-3 h-3" />
             </button>
           </div>
 
           <div className="space-y-3">
             {adminNotices.map(notice => (
-              <div key={notice.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+              <div
+                key={notice.id}
+                onClick={() => drillDown('teacher-announcements', { originLabel: 'Admin Dashboard', title: `Notice: ${notice.title}`, filter: { noticeId: notice.id } })}
+                className="p-3 bg-slate-50 hover:bg-white rounded-xl border border-slate-200 hover:border-emerald-300 hover:shadow-xs cursor-pointer transition-all space-y-1.5 group"
+                title="Click to view full notice & recipient circulation"
+              >
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-slate-900 text-xs">{notice.title}</h4>
+                  <h4 className="font-bold text-slate-900 text-xs group-hover:text-emerald-800">{notice.title}</h4>
                   <span
                     className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
                       notice.priority === 'High'
@@ -471,7 +594,10 @@ export const AdminRoleDashboard: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
                   <span>Audience: <strong>{notice.audience}</strong></span>
-                  <span>{notice.date}</span>
+                  <div className="flex items-center gap-2">
+                    <span>{notice.date}</span>
+                    <span className="text-emerald-700 font-bold group-hover:underline">Read →</span>
+                  </div>
                 </div>
               </div>
             ))}

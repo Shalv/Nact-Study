@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   GraduationCap,
   Search,
@@ -18,11 +18,26 @@ import {
 import { useApp } from '../../context/AppContext';
 
 export const TeacherStudentsView: React.FC = () => {
-  const { showToast, addActivityLog, currentUser } = useApp();
+  const { showToast, addActivityLog, currentUser, activeFilter } = useApp();
   const [selectedClass, setSelectedClass] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
   const [newNote, setNewNote] = useState<string>('');
+
+  // Sync with Global Drill-Down Active Filters
+  useEffect(() => {
+    if (activeFilter.classGrade) {
+      setSelectedClass(activeFilter.classGrade);
+    }
+    if (activeFilter.studentName) {
+      setSearchQuery(activeFilter.studentName);
+      // Auto open student modal if matched
+      const found = students.find(s => s.name.toLowerCase().includes(activeFilter.studentName.toLowerCase()));
+      if (found) {
+        setSelectedStudent(found);
+      }
+    }
+  }, [activeFilter]);
 
   const [students, setStudents] = useState([
     {
