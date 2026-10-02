@@ -1,0 +1,6 @@
+{
+  "name": "Nact Study — Creator, Institute, LMS & Marketing Automation",
+  "description": "End-to-end Creator and Institute operating system unifying LMS, CRM, Lead Pipeline, WhatsApp automation, Marketing Workflows, Sales, and Student Lifecycle.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
