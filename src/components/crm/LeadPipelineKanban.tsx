@@ -12,7 +12,10 @@ import {
   Sparkles,
   ArrowRight,
   CreditCard,
-  CheckCircle2
+  CheckCircle2,
+  Download,
+  RotateCcw,
+  RefreshCw
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Lead, LeadStage } from '../../types';
@@ -22,7 +25,7 @@ interface LeadPipelineKanbanProps {
 }
 
 export const LeadPipelineKanban: React.FC<LeadPipelineKanbanProps> = ({ onOpenNewLeadModal }) => {
-  const { leads, updateLeadStage, setSelectedLeadForDetail, createOrderAndPaymentLink } = useApp();
+  const { leads, updateLeadStage, setSelectedLeadForDetail, createOrderAndPaymentLink, showToast } = useApp();
   const [viewMode, setViewMode] = useState<'kanban' | 'table'>('kanban');
   const [searchQuery, setSearchQuery] = useState('');
   const [counselorFilter, setCounselorFilter] = useState('all');
@@ -80,6 +83,39 @@ export const LeadPipelineKanban: React.FC<LeadPipelineKanbanProps> = ({ onOpenNe
   const counselorsList = Array.from(new Set(leads.map(l => l.assignedCounselorName)));
   const sourcesList = Array.from(new Set(leads.map(l => l.source)));
 
+  const handleExportCSV = () => {
+    const headers = ['Code', 'Name', 'Phone', 'Email', 'City', 'Course', 'Source', 'Budget', 'Stage', 'Counselor', 'Created'];
+    const rows = filteredLeads.map(l => [
+      l.code,
+      `"${l.name}"`,
+      l.mobile,
+      l.email,
+      l.city,
+      `"${l.interestedProduct}"`,
+      l.source,
+      l.budget,
+      l.stage,
+      `"${l.assignedCounselorName}"`,
+      l.createdAt
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `lead_pipeline_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(`Exported ${filteredLeads.length} leads to CSV.`);
+  };
+
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setCounselorFilter('all');
+    setSourceFilter('all');
+    showToast('Filters reset to default.');
+  };
+
   return (
     <div className="p-6 space-y-5 max-w-[1600px] mx-auto">
       {/* Top Header & Toolbar */}
@@ -118,6 +154,25 @@ export const LeadPipelineKanban: React.FC<LeadPipelineKanbanProps> = ({ onOpenNe
               <span>Table</span>
             </button>
           </div>
+
+          {/* Export CSV Button */}
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-md transition-colors"
+            title="Download CSV dataset"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <span>Export CSV</span>
+          </button>
+
+          {/* Refresh Button */}
+          <button
+            onClick={() => showToast('Pipeline records refreshed.')}
+            className="p-1.5 text-slate-500 hover:text-slate-800 bg-white border border-slate-300 hover:bg-slate-50 rounded-md transition-colors"
+            title="Refresh dataset"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
 
           <button
             onClick={onOpenNewLeadModal}
@@ -168,6 +223,16 @@ export const LeadPipelineKanban: React.FC<LeadPipelineKanbanProps> = ({ onOpenNe
               </option>
             ))}
           </select>
+
+          {(searchQuery || counselorFilter !== 'all' || sourceFilter !== 'all') && (
+            <button
+              onClick={handleResetFilters}
+              className="flex items-center gap-1 px-2.5 py-1.5 text-xs text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 rounded-md transition-colors"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>Reset</span>
+            </button>
+          )}
         </div>
       </div>
 

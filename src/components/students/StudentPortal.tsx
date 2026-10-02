@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   GraduationCap,
   BookOpen,
@@ -33,10 +33,20 @@ export const StudentPortal: React.FC = () => {
     activityLogs,
     addActivityLog,
     showToast,
-    instituteProfile
+    instituteProfile,
+    activeModule,
+    setActiveModule,
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'classroom' | 'assignments' | 'results' | 'fees' | 'idcard' | 'activity'>('dashboard');
+
+  useEffect(() => {
+    if (activeModule.startsWith('student-')) {
+      const tab = activeModule.replace('student-', '');
+      if (tab === 'portal') setActiveTab('dashboard');
+      else setActiveTab(tab as any);
+    }
+  }, [activeModule]);
 
   // Strict student isolation: Only grab records belonging to this logged in student!
   const myEnrollment = enrollments.find(

@@ -9,13 +9,17 @@ import {
   UserCheck,
   ChevronRight,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  Download,
+  RefreshCw,
+  Printer,
+  RotateCcw
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Lead } from '../../types';
 
 export const ContactList: React.FC = () => {
-  const { leads, setSelectedLeadForDetail, setActiveModule } = useApp();
+  const { leads, setSelectedLeadForDetail, setActiveModule, showToast } = useApp();
   const [search, setSearch] = useState('');
   const [selectedContact, setSelectedContact] = useState<Lead>(leads[0]);
 
@@ -24,6 +28,30 @@ export const ContactList: React.FC = () => {
     l.email.toLowerCase().includes(search.toLowerCase()) ||
     l.mobile.includes(search)
   );
+
+  const handleExportCSV = () => {
+    const headers = ['Code', 'Name', 'Phone', 'Email', 'City', 'State', 'Product', 'Budget', 'Counselor'];
+    const rows = filtered.map(c => [
+      c.code,
+      `"${c.name}"`,
+      c.mobile,
+      c.email,
+      c.city,
+      c.state,
+      `"${c.interestedProduct}"`,
+      c.budget,
+      `"${c.assignedCounselorName}"`
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `contacts_directory_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(`Exported ${filtered.length} contacts to CSV.`);
+  };
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -38,12 +66,30 @@ export const ContactList: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => setActiveModule('leads')}
-          className="text-xs font-semibold text-indigo-600 hover:text-indigo-900"
-        >
-          Go to Lead Pipeline Kanban →
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <span>Export CSV</span>
+          </button>
+
+          <button
+            onClick={() => showToast('Contacts directory refreshed.')}
+            className="p-1.5 text-slate-500 hover:text-slate-800 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors"
+            title="Refresh list"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            onClick={() => setActiveModule('leads')}
+            className="text-xs font-semibold text-indigo-600 hover:text-indigo-900 ml-2"
+          >
+            Go to Lead Pipeline Kanban →
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

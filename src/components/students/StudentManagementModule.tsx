@@ -10,13 +10,16 @@ import {
   Play,
   FileText,
   UserCheck,
-  Search
+  Search,
+  RefreshCw,
+  Plus,
+  RotateCcw
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { StudentEnrollment } from '../../types';
 
 export const StudentManagementModule: React.FC = () => {
-  const { enrollments, currentRole, setActiveModule, setSelectedCourseForPlayer, courses } = useApp();
+  const { enrollments, currentRole, setActiveModule, setSelectedCourseForPlayer, courses, showToast } = useApp();
   const [viewMode, setViewMode] = useState<'admin-roster' | 'student-portal'>('admin-roster');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -26,6 +29,29 @@ export const StudentManagementModule: React.FC = () => {
     e.studentEmail.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleExportCSV = () => {
+    const headers = ['Student Name', 'Email', 'Course', 'Progress %', 'Attendance %', 'Assignments', 'Certificate', 'Fee Status'];
+    const rows = filteredEnrollments.map(e => [
+      `"${e.studentName}"`,
+      e.studentEmail,
+      `"${e.courseTitle}"`,
+      e.progressPercentage,
+      e.attendancePercentage,
+      `"${e.assignmentsSubmittedCount}/${e.totalAssignmentsCount}"`,
+      e.certificateIssued ? 'Issued' : 'Pending',
+      e.paymentStatus
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `student_roster_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(`Exported ${filteredEnrollments.length} student records to CSV.`);
+  };
+
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
@@ -34,7 +60,7 @@ export const StudentManagementModule: React.FC = () => {
           <h1 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
             <span>Student Management & Learning Portal</span>
             <span className="text-xs font-mono bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-semibold">
-              1,850 Active Learners
+              {filteredEnrollments.length} Active Records
             </span>
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -42,8 +68,32 @@ export const StudentManagementModule: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg text-xs font-medium">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <span>Export CSV</span>
+          </button>
+
+          <button
+            onClick={() => showToast('Student directory refreshed.')}
+            className="p-1.5 text-slate-500 hover:text-slate-800 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors"
+            title="Refresh records"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            onClick={() => setActiveModule('student-admission')}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#3d5ee1] hover:bg-[#324ecc] rounded-lg shadow-2xs transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New Admission</span>
+          </button>
+
+          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg text-xs font-medium ml-1">
             <button
               onClick={() => setViewMode('admin-roster')}
               className={`px-3 py-1 rounded transition-colors ${

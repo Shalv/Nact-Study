@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   GraduationCap,
@@ -39,7 +39,8 @@ import {
   Bell,
   ShieldCheck,
   UserCheck,
-  ChevronDown
+  ChevronDown,
+  BarChart3
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -55,6 +56,16 @@ import { TeacherQuestionGenerator } from './TeacherQuestionGenerator';
 import { TeacherDoubtsView } from './TeacherDoubtsView';
 import { TeacherAnnouncementsView } from './TeacherAnnouncementsView';
 import { TeacherActivityLogView } from './TeacherActivityLogView';
+import { TeacherTimetableView } from './TeacherTimetableView';
+import { TeacherExamBuilderView } from './TeacherExamBuilderView';
+import { TeacherQuestionBankView } from './TeacherQuestionBankView';
+import { TeacherAssignmentsView } from './TeacherAssignmentsView';
+import { TeacherAttendanceView } from './TeacherAttendanceView';
+import { TeacherMarksAssessmentView } from './TeacherMarksAssessmentView';
+import { TeacherClassroomActivitiesView } from './TeacherClassroomActivitiesView';
+import { TeacherExaminationView } from './TeacherExaminationView';
+import { TeacherLeaveSubstituteView } from './TeacherLeaveSubstituteView';
+import { TeacherReportsView } from './TeacherReportsView';
 
 export const TeacherPortal: React.FC = () => {
   const {
@@ -63,11 +74,14 @@ export const TeacherPortal: React.FC = () => {
     addActivityLog,
     showToast,
     instituteProfile,
+    activeModule,
+    setActiveModule,
   } = useApp();
 
   // Active sub-module navigation
   const [activeNav, setActiveNav] = useState<
     | 'dashboard'
+    | 'timetable'
     | 'my-classes'
     | 'students'
     | 'subjects'
@@ -86,8 +100,34 @@ export const TeacherPortal: React.FC = () => {
     | 'attendance'
     | 'announcements'
     | 'doubts'
+    | 'activities'
+    | 'examination'
+    | 'leave-substitute'
+    | 'reports'
     | 'activity'
   >('dashboard');
+
+  useEffect(() => {
+    if (activeModule.startsWith('teacher-')) {
+      const sub = activeModule.replace('teacher-', '');
+      if (sub === 'classes') setActiveNav('my-classes');
+      else if (sub === 'grading') setActiveNav('gradebook');
+      else if (sub === 'materials') setActiveNav('lesson-resources');
+      else if (sub === 'planner') setActiveNav('lesson-planner');
+      else if (sub === 'questions') setActiveNav('question-generator');
+      else if (sub === 'activity') setActiveNav('activity');
+      else if (sub === 'leave') setActiveNav('leave-substitute');
+      else if (sub === 'activities') setActiveNav('activities');
+      else if (sub === 'timetable') setActiveNav('timetable');
+      else if (sub === 'exam-builder') setActiveNav('exam-builder');
+      else if (sub === 'question-bank') setActiveNav('question-bank');
+      else if (sub === 'examination') setActiveNav('examination');
+      else if (sub === 'assignments') setActiveNav('assignments');
+      else if (sub === 'attendance') setActiveNav('attendance');
+      else if (sub === 'reports') setActiveNav('reports');
+      else setActiveNav(sub as any);
+    }
+  }, [activeModule]);
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -349,12 +389,8 @@ export const TeacherPortal: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-[#f7f7fa] font-sans text-slate-900">
-      {/* 1. LEFT SIDEBAR: INSTRUCTOR WORKSPACE */}
-      <aside
-        className={`${
-          sidebarCollapsed ? 'w-20' : 'w-64'
-        } shrink-0 bg-white border-r border-slate-200 flex flex-col justify-between select-none transition-all duration-200 sticky top-0 h-screen`}
-      >
+      {/* 1. LEFT SIDEBAR: INSTRUCTOR WORKSPACE (Controlled via unified app sidebar) */}
+      <aside className="hidden">
         <div className="py-4 px-3 space-y-5 overflow-y-auto">
           {/* Header Brand */}
           <div className="px-2 flex items-center justify-between">
@@ -608,7 +644,7 @@ export const TeacherPortal: React.FC = () => {
             )}
 
             <button
-              onClick={() => setShowFullWeekModal(true)}
+              onClick={() => setActiveNav('timetable')}
               className="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5 shadow-2xs"
             >
               <Calendar className="w-3.5 h-3.5 text-slate-500" />
@@ -651,14 +687,16 @@ export const TeacherPortal: React.FC = () => {
               <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-1">
                 Faculty Quick Access Launchpad
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2">
                 {[
+                  { label: 'Timetable', nav: 'timetable', icon: Calendar, color: 'text-indigo-600 bg-indigo-50' },
                   { label: 'Attendance', nav: 'attendance', icon: UserCheck, color: 'text-emerald-600 bg-emerald-50' },
-                  { label: 'Grading Desk', nav: 'assignments', icon: ListTodo, color: 'text-amber-600 bg-amber-50' },
-                  { label: 'AI Video', nav: 'ai-video', icon: Video, color: 'text-purple-600 bg-purple-50' },
-                  { label: 'Question Bank', nav: 'question-bank', icon: BookOpen, color: 'text-blue-600 bg-blue-50' },
-                  { label: 'Exam Builder', nav: 'exam-builder', icon: Award, color: 'text-rose-600 bg-rose-50' },
-                  { label: 'Lesson Planner', nav: 'lesson-planner', icon: Wand2, color: 'text-indigo-600 bg-indigo-50' },
+                  { label: 'Assignments', nav: 'assignments', icon: ListTodo, color: 'text-amber-600 bg-amber-50' },
+                  { label: 'Marks/Grades', nav: 'gradebook', icon: Award, color: 'text-blue-600 bg-blue-50' },
+                  { label: 'Question Bank', nav: 'question-bank', icon: BookOpen, color: 'text-cyan-600 bg-cyan-50' },
+                  { label: 'Exam Builder', nav: 'exam-builder', icon: FileText, color: 'text-rose-600 bg-rose-50' },
+                  { label: 'Activities', nav: 'activities', icon: Sparkles, color: 'text-purple-600 bg-purple-50' },
+                  { label: 'Reports MIS', nav: 'reports', icon: BarChart3, color: 'text-slate-600 bg-slate-100' },
                 ].map((item, idx) => (
                   <button
                     key={idx}
@@ -982,231 +1020,10 @@ export const TeacherPortal: React.FC = () => {
         {activeNav === 'activity' && <TeacherActivityLogView />}
 
         {/* M. ATTENDANCE REGISTER */}
-        {activeNav === 'attendance' && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4 animate-in fade-in duration-150 text-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <UserCheck className="w-5 h-5 text-emerald-600" />
-                  <span>Period Attendance & Roll Call Register</span>
-                </h3>
-                <p className="text-slate-500">Record and submit student daily attendance per class period.</p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <select
-                  value={selectedAttendanceClass}
-                  onChange={e => setSelectedAttendanceClass(e.target.value)}
-                  className="px-3 py-1.5 border border-slate-200 rounded-xl font-semibold bg-slate-50"
-                >
-                  <option value="Class 8-A">Class 8-A (Mathematics)</option>
-                  <option value="Class 9-B">Class 9-B (Physics)</option>
-                  <option value="Class 10-A">Class 10-A (Chemistry)</option>
-                </select>
-
-                <button
-                  onClick={() => {
-                    const allPresent: any = {};
-                    Object.keys(attendanceSheet).forEach(k => (allPresent[k] = 'present'));
-                    setAttendanceSheet(allPresent);
-                    showToast('All students marked as Present.');
-                  }}
-                  className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl font-semibold hover:bg-emerald-100 transition-colors"
-                >
-                  Mark All Present
-                </button>
-
-                <button
-                  onClick={handleSaveAttendance}
-                  className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-xs transition-colors flex items-center gap-1.5"
-                >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>Save Attendance Register</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
-                  <tr>
-                    <th className="py-2.5 px-4">Roll / ID</th>
-                    <th className="py-2.5 px-4">Student Name</th>
-                    <th className="py-2.5 px-4">Class</th>
-                    <th className="py-2.5 px-4 text-center">Attendance Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {[
-                    { id: 'PRE-1001', name: 'Aarav Patel', roll: '01' },
-                    { id: 'PRE-1002', name: 'Sneha Kulkarni', roll: '02' },
-                    { id: 'PRE-1003', name: 'Manoj Deshmukh', roll: '03' },
-                    { id: 'PRE-1004', name: 'Tanya Narang', roll: '04' },
-                    { id: 'PRE-1005', name: 'Harish Chandra', roll: '05' },
-                    { id: 'PRE-1006', name: 'Rohan Deshpande', roll: '06' },
-                  ].map(std => {
-                    const status = attendanceSheet[std.id] || 'present';
-                    return (
-                      <tr key={std.id} className="hover:bg-slate-50">
-                        <td className="py-3 px-4 font-mono font-bold text-slate-700">{std.roll}</td>
-                        <td className="py-3 px-4 font-semibold text-slate-900">{std.name}</td>
-                        <td className="py-3 px-4 text-slate-500">{selectedAttendanceClass}</td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center justify-center gap-2">
-                            <button
-                              onClick={() => setAttendanceSheet({ ...attendanceSheet, [std.id]: 'present' })}
-                              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${
-                                status === 'present'
-                                  ? 'bg-emerald-600 text-white shadow-2xs'
-                                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                              }`}
-                            >
-                              Present
-                            </button>
-                            <button
-                              onClick={() => setAttendanceSheet({ ...attendanceSheet, [std.id]: 'late' })}
-                              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${
-                                status === 'late'
-                                  ? 'bg-amber-500 text-white shadow-2xs'
-                                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                              }`}
-                            >
-                              Late
-                            </button>
-                            <button
-                              onClick={() => setAttendanceSheet({ ...attendanceSheet, [std.id]: 'absent' })}
-                              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all ${
-                                status === 'absent'
-                                  ? 'bg-rose-600 text-white shadow-2xs'
-                                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                              }`}
-                            >
-                              Absent
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+        {activeNav === 'attendance' && <TeacherAttendanceView />}
 
         {/* N. ASSIGNMENTS EVALUATION & GRADING */}
-        {activeNav === 'assignments' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in duration-150 text-xs">
-            <div className="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="font-bold text-slate-900 text-sm">Submissions To Evaluate</h3>
-                <span className="text-[10px] font-mono bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded">
-                  {assignmentsList.length} Items
-                </span>
-              </div>
-
-              <div className="space-y-2">
-                {assignmentsList.map(asg => {
-                  const isSelected = selectedAsgForGrading.id === asg.id;
-                  return (
-                    <button
-                      key={asg.id}
-                      onClick={() => {
-                        setSelectedAsgForGrading(asg);
-                        setGradingScoreInput(asg.score || 90);
-                        setGradingRemarksInput(asg.remarks || 'Good structure and methodology.');
-                      }}
-                      className={`w-full text-left p-3.5 rounded-xl border transition-all ${
-                        isSelected
-                          ? 'border-[#3d5ee1] bg-blue-50/60 shadow-2xs'
-                          : 'border-slate-200 bg-white hover:bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-slate-900 text-xs">{asg.studentName}</span>
-                        <span
-                          className={`text-[9px] font-mono px-2 py-0.5 rounded font-bold ${
-                            asg.status === 'Graded'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-amber-100 text-amber-800'
-                          }`}
-                        >
-                          {asg.status === 'Graded' ? `${asg.score}/100` : 'Pending'}
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-600 font-medium truncate">{asg.title}</div>
-                      <div className="text-[10px] text-slate-400 font-mono mt-1">{asg.classGrade} · {asg.submittedAt}</div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div>
-                  <h3 className="text-base font-bold text-slate-900">Grading & Rubrics Evaluation</h3>
-                  <p className="text-slate-500">Student: <strong>{selectedAsgForGrading.studentName}</strong> ({selectedAsgForGrading.classGrade})</p>
-                </div>
-                <a
-                  href={selectedAsgForGrading.repoUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs font-semibold text-[#3d5ee1] hover:underline flex items-center gap-1"
-                >
-                  <span>Open Deliverable</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
-
-              <form onSubmit={handleSaveGrade} className="space-y-4 text-xs">
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                  <div className="font-bold text-slate-900">{selectedAsgForGrading.title}</div>
-                  <div className="text-slate-500 font-mono text-[11px] truncate">
-                    URL: {selectedAsgForGrading.repoUrl}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Score / Marks (out of 100) <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    max={100}
-                    required
-                    value={gradingScoreInput}
-                    onChange={e => setGradingScoreInput(Number(e.target.value))}
-                    className="w-40 px-3 py-2 border border-slate-200 rounded-xl font-mono font-bold text-slate-900 focus:outline-none focus:border-[#3d5ee1]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Feedback & Recommendations for Student
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={gradingRemarksInput}
-                    onChange={e => setGradingRemarksInput(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#3d5ee1]"
-                  />
-                </div>
-
-                <div className="pt-3 border-t border-slate-100 flex justify-end">
-                  <button
-                    type="submit"
-                    className="px-5 py-2 bg-[#3d5ee1] hover:bg-[#324ecc] text-white font-bold rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
-                  >
-                    <Save className="w-3.5 h-3.5" />
-                    <span>Submit Evaluation</span>
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+        {activeNav === 'assignments' && <TeacherAssignmentsView />}
 
         {/* O. AI CONTENT STUDIO */}
         {activeNav === 'ai-content' && (
@@ -1371,88 +1188,10 @@ export const TeacherPortal: React.FC = () => {
         )}
 
         {/* Q. EXAM BUILDER */}
-        {activeNav === 'exam-builder' && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-5 animate-in fade-in duration-150 text-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-amber-600" />
-                  <span>Exam Blueprint & Question Paper Architect</span>
-                </h3>
-                <p className="text-slate-500">
-                  Construct CBSE and Institute compliant summative exam papers with marks weighting.
-                </p>
-              </div>
-
-              <button
-                onClick={() => showToast('Exam Blueprint saved to Academic Council!')}
-                className="px-4 py-2 bg-[#3d5ee1] hover:bg-[#324ecc] text-white rounded-xl font-bold flex items-center gap-1.5 shadow-xs"
-              >
-                <Save className="w-3.5 h-3.5" />
-                <span>Save Blueprint</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {examSections.map((sec, i) => (
-                <div key={i} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900">{sec.name}</span>
-                    <span className="font-mono font-bold text-[#3d5ee1] bg-white px-2 py-0.5 rounded border border-slate-200">
-                      {sec.total} Marks
-                    </span>
-                  </div>
-                  <p className="text-slate-500 text-[11px]">{sec.count} Structured items assigned</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {activeNav === 'exam-builder' && <TeacherExamBuilderView />}
 
         {/* R. QUESTION BANK */}
-        {activeNav === 'question-bank' && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4 animate-in fade-in duration-150 text-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h3 className="text-base font-bold text-slate-900">Institutional Question Bank</h3>
-                <p className="text-slate-500">Searchable repository of vetted questions across subjects and difficulty tiers.</p>
-              </div>
-
-              <button
-                onClick={() => setActiveNav('question-generator')}
-                className="px-3.5 py-1.5 bg-[#3d5ee1] hover:bg-[#324ecc] text-white rounded-xl font-semibold flex items-center gap-1.5"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Generate Questions (AI)</span>
-              </button>
-            </div>
-
-            <div className="space-y-2.5">
-              {questionBank.map(q => (
-                <div key={q.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-slate-700">{q.id}</span>
-                      <span className="font-semibold text-slate-900">{q.subject} · {q.topic}</span>
-                    </div>
-                    <span
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold ${
-                        q.difficulty === 'Easy'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : q.difficulty === 'Medium'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {q.difficulty}
-                    </span>
-                  </div>
-                  <p className="text-slate-700 font-medium">{q.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {activeNav === 'question-bank' && <TeacherQuestionBankView />}
 
         {/* S. MY CLASSES */}
         {activeNav === 'my-classes' && (
@@ -1508,57 +1247,22 @@ export const TeacherPortal: React.FC = () => {
         )}
 
         {/* T. GRADEBOOK */}
-        {activeNav === 'gradebook' && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4 animate-in fade-in duration-150 text-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h3 className="text-base font-bold text-slate-900">Academic Gradebook & Mark Matrix</h3>
-                <p className="text-slate-500">Continuous assessment scores and term examination marks.</p>
-              </div>
-              <button
-                onClick={() => showToast('Gradebook exported as CSV.')}
-                className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold flex items-center gap-1.5"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Export CSV</span>
-              </button>
-            </div>
+        {activeNav === 'gradebook' && <TeacherMarksAssessmentView />}
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
-                  <tr>
-                    <th className="py-2.5 px-4">Student</th>
-                    <th className="py-2.5 px-4 text-center">Unit Test 1 (25)</th>
-                    <th className="py-2.5 px-4 text-center">Mid-Term (50)</th>
-                    <th className="py-2.5 px-4 text-center">Practical Lab (25)</th>
-                    <th className="py-2.5 px-4 text-center font-bold">Total (100)</th>
-                    <th className="py-2.5 px-4 text-right">Grade Band</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {[
-                    { name: 'Aarav Patel', id: 'PRE-1001', ut: 25, mid: 49, lab: 25, total: 99, grade: 'A+ (Distinction)' },
-                    { name: 'Sneha Kulkarni', id: 'PRE-1002', ut: 24, mid: 47, lab: 25, total: 96, grade: 'A+ (Distinction)' },
-                    { name: 'Manoj Deshmukh', id: 'PRE-1003', ut: 23, mid: 46, lab: 24, total: 93, grade: 'A (Excellence)' },
-                    { name: 'Tanya Narang', id: 'PRE-1004', ut: 22, mid: 44, lab: 23, total: 89, grade: 'A (Excellence)' },
-                  ].map(s => (
-                    <tr key={s.id} className="hover:bg-slate-50">
-                      <td className="py-3 px-4 font-semibold text-slate-900">
-                        {s.name} <span className="font-mono text-slate-400 font-normal">({s.id})</span>
-                      </td>
-                      <td className="py-3 px-4 text-center font-mono">{s.ut}</td>
-                      <td className="py-3 px-4 text-center font-mono">{s.mid}</td>
-                      <td className="py-3 px-4 text-center font-mono">{s.lab}</td>
-                      <td className="py-3 px-4 text-center font-mono font-bold text-slate-900">{s.total}</td>
-                      <td className="py-3 px-4 text-right font-semibold text-emerald-600">{s.grade}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+        {/* U. TIMETABLE & CONFLICT DETECTOR */}
+        {activeNav === 'timetable' && <TeacherTimetableView />}
+
+        {/* V. CLASSROOM ACTIVITIES */}
+        {activeNav === 'activities' && <TeacherClassroomActivitiesView />}
+
+        {/* W. EXAMINATION & INVIGILATION */}
+        {activeNav === 'examination' && <TeacherExaminationView />}
+
+        {/* X. LEAVE & SUBSTITUTES */}
+        {activeNav === 'leave-substitute' && <TeacherLeaveSubstituteView />}
+
+        {/* Y. ACADEMIC REPORTS */}
+        {activeNav === 'reports' && <TeacherReportsView />}
       </main>
 
       {/* TIMETABLE FULL WEEK MODAL */}

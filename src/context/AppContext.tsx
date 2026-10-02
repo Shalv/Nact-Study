@@ -60,8 +60,16 @@ interface AppContextType {
   activeModule: string;
   setActiveModule: (module: string) => void;
   isLoggedIn: boolean;
-  login: (usernameOrEmail: string, password?: string) => boolean;
-  logout: () => void;
+  login: (usernameOrEmail: string, password?: string) => Promise<boolean> | boolean;
+  logout: () => Promise<void> | void;
+  isProfileModalOpen: boolean;
+  setIsProfileModalOpen: (open: boolean) => void;
+  updateUserProfile: (updates: Partial<AppUser>) => Promise<void>;
+  changeUserPassword: (currentPass: string, newPass: string, confirmPass: string) => Promise<{ success: boolean; error?: string }>;
+  isSidebarCollapsed: boolean;
+  setIsSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  isMobileSidebarOpen: boolean;
+  setIsMobileSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
   activityLogs: UserActivityLog[];
   addActivityLog: (log: Omit<UserActivityLog, 'id' | 'timestamp'>) => void;
   updateUserPermissions: (userId: string, permissions: Partial<UserPermissions>) => void;
@@ -118,9 +126,14 @@ const LOCAL_STORAGE_KEY = 'nact_study_app_data_v3';
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<AppUser[]>(initialUsers);
   const [currentUser, setCurrentUser] = useState<AppUser>(initialUsers[0]); // Defaults to Anita Sen (Super Admin)
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    return !!localStorage.getItem('nact_auth_token');
+  });
   const [currentRole, setCurrentRole] = useState<UserRole>('Super Admin');
   const [activeModule, setActiveModule] = useState<string>('dashboard');
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [activityLogs, setActivityLogs] = useState<UserActivityLog[]>(initialActivityLogs);
   const [creatorProfile, setCreatorProfile] = useState<CreatorProfile>(initialCreatorProfile);
   const [instituteProfile, setInstituteProfile] = useState<InstituteProfile>(initialInstituteProfile);
@@ -683,7 +696,97 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('Application reset to default demo dataset.');
   };
 
-  const login = (usernameOrEmail: string, password?: string): boolean => {
+  // Validate existing token with backend on mount
+  useEffect(() => {
+    const token = localStorage.getItem('nact_auth_token');
+    if (!token) {
+      setIsLoggedIn(false);
+      return;
+    }
+    fetch('/api/auth/me', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Session invalid');
+        return res.json();
+      })
+      .then(data => {
+        if (data.authenticated && data.user) {
+          const matched = users.find(u => u.id === data.user.id);
+          const fullUser = matched ? { ...matched, ...data.user } : { ...currentUser, ...data.user };
+          setCurrentUser(fullUser);
+          setCurrentRole(fullUser.role);
+          setIsLoggedIn(true);
+        } else {
+          localStorage.removeItem('nact_auth_token');
+          sessionStorage.removeItem('nact_auth_token');
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(() => {
+        // Fallback for offline mode: preserve session if token exists
+      });
+  }, []);
+
+  // Prevent browser back navigation after logout
+  useEffect(() => {
+    const handlePopState = () => {
+      const token = localStorage.getItem('nact_auth_token');
+      if (!token || !isLoggedIn) {
+        window.history.replaceState(null, '', '/login');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isLoggedIn]);
+
+  const login = async (usernameOrEmail: string, password?: string): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usernameOrEmail, password })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.token) {
+          localStorage.setItem('nact_auth_token', data.token);
+          sessionStorage.setItem('nact_auth_token', data.token);
+        }
+        const fullUser = users.find(u => u.id === data.user.id) || {
+          ...currentUser,
+          ...data.user,
+          permissions: data.user.permissions || currentUser.permissions
+        };
+        setCurrentUser(fullUser);
+        setCurrentRole(fullUser.role);
+        setIsLoggedIn(true);
+
+        if (fullUser.portalType === 'teacher') {
+          setActiveModule('teacher-dashboard');
+        } else if (fullUser.portalType === 'student') {
+          setActiveModule('student-portal');
+        } else {
+          setActiveModule('dashboard');
+        }
+
+        addActivityLog({
+          userId: fullUser.id,
+          userName: fullUser.name,
+          userRole: fullUser.role,
+          portalType: fullUser.portalType,
+          action: 'Portal Authentication',
+          details: `Signed into ${fullUser.portalType.toUpperCase()} portal`,
+          category: 'system'
+        });
+
+        showToast(`Authenticated as ${fullUser.name} (${fullUser.role})`);
+        return true;
+      }
+    } catch {
+      // Fallback to local user search
+    }
+
     const q = usernameOrEmail.toLowerCase().trim();
     const user = users.find(
       u => u.username?.toLowerCase() === q || u.email.toLowerCase() === q
@@ -696,6 +799,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       showToast('Incorrect password credentials.', 'warning');
       return false;
     }
+
+    const dummyToken = 'session-token-' + Date.now();
+    localStorage.setItem('nact_auth_token', dummyToken);
+    sessionStorage.setItem('nact_auth_token', dummyToken);
 
     setCurrentUser(user);
     setCurrentRole(user.role);
@@ -723,7 +830,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return true;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const token = localStorage.getItem('nact_auth_token');
+    if (token) {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch {
+        // ignore
+      }
+    }
+
+    localStorage.removeItem('nact_auth_token');
+    sessionStorage.removeItem('nact_auth_token');
+
     addActivityLog({
       userId: currentUser.id,
       userName: currentUser.name,
@@ -733,8 +855,70 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       details: `Session closed for ${currentUser.name}`,
       category: 'system'
     });
+
     setIsLoggedIn(false);
-    showToast('Logged out successfully.', 'info');
+    setIsProfileModalOpen(false);
+
+    // Enforce history state replacement to prevent browser Back access
+    window.history.replaceState(null, '', '/login');
+    window.history.pushState(null, '', '/login');
+
+    showToast('Logged out successfully. Session closed.', 'info');
+  };
+
+  const updateUserProfile = async (updates: Partial<AppUser>) => {
+    const token = localStorage.getItem('nact_auth_token');
+    try {
+      const res = await fetch('/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(updates)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          setCurrentUser(prev => ({ ...prev, ...data.user }));
+          setUsers(prev => prev.map(u => (u.id === currentUser.id ? { ...u, ...data.user } : u)));
+          return;
+        }
+      }
+    } catch {
+      // fallback
+    }
+
+    setCurrentUser(prev => ({ ...prev, ...updates }));
+    setUsers(prev => prev.map(u => (u.id === currentUser.id ? { ...u, ...updates } : u)));
+  };
+
+  const changeUserPassword = async (currentPass: string, newPass: string, confirmPass: string) => {
+    const token = localStorage.getItem('nact_auth_token');
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ currentPassword: currentPass, newPassword: newPass, confirmPassword: confirmPass })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Failed to update password' };
+      }
+      setCurrentUser(prev => ({ ...prev, password: newPass }));
+      setUsers(prev => prev.map(u => (u.id === currentUser.id ? { ...u, password: newPass } : u)));
+      return { success: true };
+    } catch {
+      if (currentUser.password && currentUser.password !== currentPass) {
+        return { success: false, error: 'Current password provided is incorrect.' };
+      }
+      setCurrentUser(prev => ({ ...prev, password: newPass }));
+      setUsers(prev => prev.map(u => (u.id === currentUser.id ? { ...u, password: newPass } : u)));
+      return { success: true };
+    }
   };
 
   const addActivityLog = (log: Omit<UserActivityLog, 'id' | 'timestamp'>) => {
@@ -830,6 +1014,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         toast,
         showToast,
         resetAllData,
+        isProfileModalOpen,
+        setIsProfileModalOpen,
+        isSidebarCollapsed,
+        setIsSidebarCollapsed,
+        isMobileSidebarOpen,
+        setIsMobileSidebarOpen,
+        updateUserProfile,
+        changeUserPassword,
       }}
     >
       {children}

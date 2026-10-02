@@ -3,6 +3,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
 import { LoginPortal } from './components/auth/LoginPortal';
+import { UserProfileModal } from './components/profile/UserProfileModal';
 import { TeacherPortal } from './components/teacher/TeacherPortal';
 import { StudentPortal } from './components/students/StudentPortal';
 import { UserRightsManager } from './components/users/UserRightsManager';
@@ -25,7 +26,7 @@ import { SettingsMasterDataModule } from './components/settings/SettingsMasterDa
 import { PreskoolFormCenter } from './components/forms/PreskoolFormCenter';
 import { PreskoolIndexDashboard } from './components/preskool/PreskoolIndexDashboard';
 import { MasterDataCenter } from './components/masters/MasterDataCenter';
-import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Info } from 'lucide-react';
 
 const AppContent: React.FC = () => {
   const {
@@ -34,6 +35,8 @@ const AppContent: React.FC = () => {
     activeModule,
     selectedLeadForDetail,
     setSelectedLeadForDetail,
+    isProfileModalOpen,
+    setIsProfileModalOpen,
     toast,
   } = useApp();
 
@@ -59,26 +62,31 @@ const AppContent: React.FC = () => {
 
   // Portal-specific routing based on authenticated user's portalType & assigned modules
   const renderActiveView = () => {
-    // 1. Teacher Portal scope
-    if (currentUser.portalType === 'teacher') {
+    // 1. Teacher Portal scope or teacher submodule
+    if (currentUser.portalType === 'teacher' || activeModule.startsWith('teacher-')) {
       return <TeacherPortal />;
     }
 
-    // 2. Student Portal scope
-    if (currentUser.portalType === 'student') {
+    // 2. Student Portal scope or student submodule
+    if (currentUser.portalType === 'student' || activeModule.startsWith('student-')) {
       return <StudentPortal />;
     }
 
-    // 3. Administrator Portal scope
+    // 3. Administrator / Unified Operations Portal scope
     switch (activeModule) {
       case 'dashboard':
+        return <ExecutiveDashboard />;
       case 'preskool-dashboard':
         return <PreskoolIndexDashboard />;
       case 'user-rights':
       case 'rbac':
         return <UserRightsManager />;
       case 'student-admission':
+        return <PreskoolFormCenter />;
       case 'preskool-forms':
+        return <PreskoolFormCenter />;
+      case 'attendance':
+        return <StudentManagementModule />;
       case 'fees':
         return <PreskoolFormCenter />;
       case 'masters':
@@ -119,14 +127,22 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col text-slate-900 font-sans">
-      <Navbar onOpenNewLeadModal={() => setShowNewLeadModal(true)} />
+      {/* Top Header without duplicate navigation menus */}
+      <Navbar />
 
       <div className="flex-1 flex overflow-hidden">
-        {currentUser.portalType !== 'teacher' && <Sidebar />}
+        {/* Left Sidebar controls the entire application */}
+        <Sidebar />
         <main className="flex-1 overflow-y-auto">
           {renderActiveView()}
         </main>
       </div>
+
+      {/* User Profile & Account Settings Modal (Requirement 4) */}
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+      />
 
       {/* Global Modals */}
       {selectedLeadForDetail && (

@@ -61,6 +61,8 @@ export const LoginPortal: React.FC = () => {
     },
   ];
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSelectPortal = (type: PortalType) => {
     setSelectedPortal(type);
     setErrorMessage('');
@@ -69,21 +71,33 @@ export const LoginPortal: React.FC = () => {
     setPasswordInput(opt.defaultPass);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
+    setIsLoading(true);
 
-    const success = login(usernameInput, passwordInput);
-    if (!success) {
-      setErrorMessage('Invalid username or password credentials. Please verify your login details.');
+    try {
+      const success = await login(usernameInput, passwordInput);
+      if (!success) {
+        setErrorMessage('Invalid username or password credentials. Please verify your login details.');
+      }
+    } catch {
+      setErrorMessage('Authentication request failed. Please check connection and try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleQuickLogin = (username: string, pass: string, portal: PortalType) => {
+  const handleQuickLogin = async (username: string, pass: string, portal: PortalType) => {
     setSelectedPortal(portal);
     setUsernameInput(username);
     setPasswordInput(pass);
-    login(username, pass);
+    setIsLoading(true);
+    try {
+      await login(username, pass);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

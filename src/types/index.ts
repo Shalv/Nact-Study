@@ -118,6 +118,7 @@ export interface AppUser {
   portalType: PortalType;
   avatar: string;
   department?: string;
+  designation?: string;
   phone: string;
   active: boolean;
   assignedLeadsCount?: number;
