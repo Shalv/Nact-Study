@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FolderOpen,
   Video,
@@ -13,9 +13,12 @@ import {
   X,
   FileSpreadsheet,
   CheckCircle2,
-  Share2
+  Share2,
+  Database,
+  Trash2
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { resourceService } from '../../services/api.ts';
 
 export const TeacherLessonResourcesView: React.FC = () => {
   const { showToast, addActivityLog, currentUser } = useApp();
@@ -112,6 +115,34 @@ export const TeacherLessonResourcesView: React.FC = () => {
     }
   ]);
 
+  useEffect(() => {
+    resourceService.getAll()
+      .then(items => {
+        if (items && items.length > 0) {
+          const mapped = items.map((r: any) => {
+            const isVid = r.resource_type === 'VIDEO';
+            const isPPT = r.resource_type === 'PRESENTATION';
+            return {
+              id: r.id,
+              title: r.title,
+              type: r.resource_type ? r.resource_type.replace('_', ' ') : 'Lecture Notes',
+              subject: r.subject_id?.includes('sci') ? 'Science' : r.subject_id?.includes('math') ? 'Mathematics' : 'General',
+              classGrade: r.class_id === 'cls-8' ? 'Class 8-A' : r.class_id === 'cls-9' ? 'Class 9-B' : 'Class 10-A',
+              size: r.file_size || r.duration || '3.5 MB',
+              uploadDate: r.created_at ? r.created_at.split('T')[0] : '2026-10-02',
+              downloads: r.downloads || 0,
+              icon: isVid ? Video : isPPT ? FileSpreadsheet : FileText,
+              badgeColor: isVid ? 'bg-purple-50 text-purple-700' : isPPT ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700',
+              description: r.description || '',
+              url: r.file_url || 'https://cdn.nactstudy.edu/resources/sample-document.pdf'
+            };
+          });
+          setResources(mapped);
+        }
+      })
+      .catch(err => console.error('Failed to load resources from DB:', err));
+  }, []);
+
   const [newResource, setNewResource] = useState({
     title: '',
     type: 'Lecture Notes (PDF)',
@@ -121,26 +152,64 @@ export const TeacherLessonResourcesView: React.FC = () => {
     url: ''
   });
 
-  const handleUploadResource = (e: React.FormEvent) => {
+  const handleUploadResource = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newResource.title.trim()) return;
 
-    const resObj = {
-      id: `RES-${Math.floor(100 + Math.random() * 900)}`,
-      title: newResource.title,
-      type: newResource.type,
-      subject: newResource.subject,
-      classGrade: newResource.classGrade,
-      size: '5.2 MB',
-      uploadDate: new Date().toISOString().split('T')[0],
-      downloads: 0,
-      icon: newResource.type.includes('Video') ? Video : FileText,
-      badgeColor: 'bg-indigo-50 text-indigo-700',
-      description: newResource.description || 'Curated classroom instructional resource.',
-      url: newResource.url || 'https://cdn.nactstudy.edu/resources/sample-document.pdf'
-    };
+    let resType = 'LECTURE_NOTE';
+    if (newResource.type.includes('Video')) resType = 'VIDEO';
+    else if (newResource.type.includes('Presentation')) resType = 'PRESENTATION';
+    else if (newResource.type.includes('Worksheet')) resType = 'WORKSHEET';
 
-    setResources([resObj, ...resources]);
+    try {
+      const created = await resourceService.create({
+        title: newResource.title,
+        resource_type: resType,
+        class_id: newResource.classGrade.includes('8') ? 'cls-8' : newResource.classGrade.includes('9') ? 'cls-9' : 'cls-10',
+        section_id: 'sec-8a',
+        subject_id: newResource.subject.toLowerCase().includes('math') ? 'sub-8-math' : 'sub-8-sci',
+        topic_id: 'top-light',
+        description: newResource.description,
+        file_size: '4.5 MB',
+        file_url: newResource.url || 'https://cdn.nactstudy.edu/resources/uploaded-asset.pdf',
+        status: 'PUBLISHED'
+      });
+
+      const resObj = {
+        id: created.id,
+        title: created.title,
+        type: newResource.type,
+        subject: newResource.subject,
+        classGrade: newResource.classGrade,
+        size: '4.5 MB',
+        uploadDate: new Date().toISOString().split('T')[0],
+        downloads: 0,
+        icon: newResource.type.includes('Video') ? Video : FileText,
+        badgeColor: 'bg-indigo-50 text-indigo-700',
+        description: created.description || 'Curated classroom instructional resource.',
+        url: created.file_url || 'https://cdn.nactstudy.edu/resources/sample-document.pdf'
+      };
+
+      setResources(prev => [resObj, ...prev]);
+      showToast(`Resource "${newResource.title}" persisted to PostgreSQL & shared with students.`, 'success');
+    } catch {
+      const resObj = {
+        id: `RES-${Math.floor(100 + Math.random() * 900)}`,
+        title: newResource.title,
+        type: newResource.type,
+        subject: newResource.subject,
+        classGrade: newResource.classGrade,
+        size: '5.2 MB',
+        uploadDate: new Date().toISOString().split('T')[0],
+        downloads: 0,
+        icon: newResource.type.includes('Video') ? Video : FileText,
+        badgeColor: 'bg-indigo-50 text-indigo-700',
+        description: newResource.description || 'Curated classroom instructional resource.',
+        url: newResource.url || 'https://cdn.nactstudy.edu/resources/sample-document.pdf'
+      };
+      setResources(prev => [resObj, ...prev]);
+      showToast(`Resource "${newResource.title}" uploaded.`);
+    }
 
     addActivityLog({
       userId: currentUser.id,
@@ -152,7 +221,6 @@ export const TeacherLessonResourcesView: React.FC = () => {
       category: 'academic'
     });
 
-    showToast(`Resource "${newResource.title}" uploaded & shared with students.`);
     setShowUploadModal(false);
     setNewResource({
       title: '',

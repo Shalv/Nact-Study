@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
+import { apiRouter } from './src/server/routes.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -282,6 +283,9 @@ async function startServer() {
       message: 'Profile updated successfully.'
     });
   });
+
+  // Mount Education Relational Database REST API
+  app.use('/api', apiRouter);
 
   // Heartbeat / health check
   app.get('/api/health', (req, res) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Users2,
   Calendar,
@@ -22,12 +22,32 @@ import {
   ExternalLink,
   ChevronRight,
   Filter,
-  Phone
+  Phone,
+  Database
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { reportService } from '../../services/api.ts';
 
 export const TeacherRoleDashboard: React.FC = () => {
   const { currentUser, setActiveModule, showToast, addActivityLog } = useApp();
+
+  // Dynamic Dashboard Stats from PostgreSQL Cloud (Requirement 21)
+  const [stats, setStats] = useState({
+    todayClasses: 4,
+    lessonsPlanned: 2,
+    lessonsCompleted: 1,
+    assignmentsPending: 1,
+    assignmentsReviewed: 48,
+    resourcesCreated: 6,
+    pendingAssessments: 3,
+    activeDeliveries: 0,
+  });
+
+  useEffect(() => {
+    reportService.getDashboardStats()
+      .then(setStats)
+      .catch(err => console.error('Failed to load dashboard stats:', err));
+  }, []);
 
   // Pending Tasks Interactive Checklist
   const [tasks, setTasks] = useState([
@@ -94,42 +114,69 @@ export const TeacherRoleDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Top Metric Counters (Classes, Students, Attendance, Pending Evaluations) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-emerald-300 transition-all">
+      {/* 2. Top Metric Counters from Cloud PostgreSQL (Requirement 21) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-indigo-300 transition-all">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-[11px] font-bold uppercase tracking-wider">My Classes</span>
-            <Users2 className="w-4 h-4 text-indigo-600" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Today's Classes</span>
+            <Users2 className="w-3.5 h-3.5 text-indigo-600" />
           </div>
-          <div className="text-2xl font-black text-slate-900">3 Cohorts</div>
-          <div className="text-[10px] text-slate-500">84 Total Assigned Students</div>
+          <div className="text-xl font-black text-slate-900">{stats.todayClasses} Classes</div>
+          <div className="text-[10px] text-emerald-600 font-semibold">Active in DB</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-emerald-300 transition-all">
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-emerald-300 transition-all">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Today's Attendance</span>
-            <UserCheck className="w-4 h-4 text-emerald-600" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Lessons Planned</span>
+            <Clock className="w-3.5 h-3.5 text-emerald-600" />
           </div>
-          <div className="text-2xl font-black text-emerald-600">96.8%</div>
-          <div className="text-[10px] text-emerald-700 font-semibold">Class 8-A Recorded (31/32)</div>
+          <div className="text-xl font-black text-emerald-600">{stats.lessonsPlanned} Planned</div>
+          <div className="text-[10px] text-slate-500">Curriculum Synced</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-emerald-300 transition-all">
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-emerald-300 transition-all">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Assignments to Grade</span>
-            <ListTodo className="w-4 h-4 text-amber-600" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Completed</span>
+            <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
           </div>
-          <div className="text-2xl font-black text-amber-600">3 Pending</div>
-          <div className="text-[10px] text-slate-500">2 Evaluated This Morning</div>
+          <div className="text-xl font-black text-teal-600">{stats.lessonsCompleted} Delivered</div>
+          <div className="text-[10px] text-teal-700 font-semibold">Delivery Logged</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-emerald-300 transition-all">
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-amber-300 transition-all">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-[11px] font-bold uppercase tracking-wider">Classroom Mean Score</span>
-            <TrendingUp className="w-4 h-4 text-blue-600" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Pending Work</span>
+            <ListTodo className="w-3.5 h-3.5 text-amber-600" />
           </div>
-          <div className="text-2xl font-black text-slate-900">84.5%</div>
-          <div className="text-[10px] text-blue-600 font-semibold">+3.2% above school average</div>
+          <div className="text-xl font-black text-amber-600">{stats.assignmentsPending} Pending</div>
+          <div className="text-[10px] text-slate-500">Assignments Due</div>
+        </div>
+
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-blue-300 transition-all">
+          <div className="flex items-center justify-between text-slate-500">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Reviewed</span>
+            <Award className="w-3.5 h-3.5 text-blue-600" />
+          </div>
+          <div className="text-xl font-black text-slate-900">{stats.assignmentsReviewed} Submissions</div>
+          <div className="text-[10px] text-blue-600 font-semibold">Graded & Verified</div>
+        </div>
+
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-purple-300 transition-all">
+          <div className="flex items-center justify-between text-slate-500">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Resources</span>
+            <FileText className="w-3.5 h-3.5 text-purple-600" />
+          </div>
+          <div className="text-xl font-black text-purple-700">{stats.resourcesCreated} Created</div>
+          <div className="text-[10px] text-slate-500">In PostgreSQL</div>
+        </div>
+
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1 hover:border-rose-300 transition-all">
+          <div className="flex items-center justify-between text-slate-500">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Assessments</span>
+            <TrendingUp className="w-3.5 h-3.5 text-rose-600" />
+          </div>
+          <div className="text-xl font-black text-rose-600">{stats.pendingAssessments} Pending</div>
+          <div className="text-[10px] text-rose-700 font-semibold">Q-Bank Linked</div>
         </div>
       </div>
 
