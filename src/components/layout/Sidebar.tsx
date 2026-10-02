@@ -101,8 +101,7 @@ export const Sidebar: React.FC = () => {
       label: 'Dashboard',
       icon: LayoutDashboard,
       items: [
-        { id: 'dashboard', label: 'Executive Dashboard', icon: LayoutDashboard, badge: null },
-        { id: 'preskool-dashboard', label: 'Preskool Academic Hub', icon: TrendingUp, badge: 'ERP' },
+        { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: null },
       ],
     },
     {
@@ -192,7 +191,7 @@ export const Sidebar: React.FC = () => {
       label: 'Dashboard',
       icon: LayoutDashboard,
       items: [
-        { id: 'teacher-dashboard', label: 'Faculty Academic Console', icon: LayoutDashboard, badge: 'Live' },
+        { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: null },
       ],
     },
     {
@@ -268,7 +267,7 @@ export const Sidebar: React.FC = () => {
       label: 'Dashboard',
       icon: LayoutDashboard,
       items: [
-        { id: 'student-portal', label: 'Learning Dashboard', icon: TrendingUp, badge: 'Active' },
+        { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: null },
       ],
     },
     {
@@ -359,6 +358,33 @@ export const Sidebar: React.FC = () => {
       {/* Navigation Groups List */}
       <div className="flex-1 overflow-y-auto py-3 px-2 space-y-3 scrollbar-thin">
         {menuGroups.map(group => {
+          // Single Dashboard button with no redundant sub-header
+          if (group.id === 'dashboard') {
+            const isActive = activeModule === 'dashboard';
+            return (
+              <button
+                key={group.id}
+                type="button"
+                onClick={() => handleNavClick('dashboard')}
+                className={`w-full flex items-center justify-between px-3 py-2 text-xs rounded-xl transition-all ${
+                  isActive
+                    ? 'bg-[#3d5ee1] text-white font-semibold shadow-xs'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
+                }`}
+                title="Dashboard"
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <LayoutDashboard
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      isActive ? 'text-white' : 'text-slate-500'
+                    }`}
+                  />
+                  <span className="truncate font-semibold">Dashboard</span>
+                </div>
+              </button>
+            );
+          }
+
           const isExpanded = expandedGroups[group.id] !== false;
           const GroupIcon = group.icon;
           const hasActiveChild = group.items.some(i => activeModule === i.id);

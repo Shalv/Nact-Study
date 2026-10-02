@@ -762,13 +762,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setCurrentRole(fullUser.role);
         setIsLoggedIn(true);
 
-        if (fullUser.portalType === 'teacher') {
-          setActiveModule('teacher-dashboard');
-        } else if (fullUser.portalType === 'student') {
-          setActiveModule('student-portal');
-        } else {
-          setActiveModule('dashboard');
-        }
+        // All roles land on the unified 'dashboard' menu, role-specific content renders automatically
+        setActiveModule('dashboard');
 
         addActivityLog({
           userId: fullUser.id,
@@ -808,13 +803,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCurrentRole(user.role);
     setIsLoggedIn(true);
 
-    if (user.portalType === 'teacher') {
-      setActiveModule('teacher-dashboard');
-    } else if (user.portalType === 'student') {
-      setActiveModule('student-portal');
-    } else {
-      setActiveModule('dashboard');
-    }
+    // All roles land on the unified 'dashboard' menu, role-specific content renders automatically
+    setActiveModule('dashboard');
 
     addActivityLog({
       userId: user.id,

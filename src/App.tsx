@@ -26,6 +26,10 @@ import { SettingsMasterDataModule } from './components/settings/SettingsMasterDa
 import { PreskoolFormCenter } from './components/forms/PreskoolFormCenter';
 import { PreskoolIndexDashboard } from './components/preskool/PreskoolIndexDashboard';
 import { MasterDataCenter } from './components/masters/MasterDataCenter';
+import { AdminRoleDashboard } from './components/dashboard/AdminRoleDashboard';
+import { TeacherRoleDashboard } from './components/dashboard/TeacherRoleDashboard';
+import { StudentRoleDashboard } from './components/dashboard/StudentRoleDashboard';
+import { AccessDeniedBanner } from './components/common/AccessDeniedBanner';
 import { CheckCircle2, AlertCircle, Info } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -33,6 +37,7 @@ const AppContent: React.FC = () => {
     isLoggedIn,
     currentUser,
     activeModule,
+    setActiveModule,
     selectedLeadForDetail,
     setSelectedLeadForDetail,
     isProfileModalOpen,
@@ -60,35 +65,80 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // Portal-specific routing based on authenticated user's portalType & assigned modules
+  // Portal-specific routing based on authenticated user's portalType & assigned modules with strict RBAC
   const renderActiveView = () => {
-    // 1. Teacher Portal scope or teacher submodule
-    if (currentUser.portalType === 'teacher' || activeModule.startsWith('teacher-')) {
-      return <TeacherPortal />;
+    // 1. Role-based Dashboard: Single 'dashboard' menu adapts content based on logged-in role
+    if (activeModule === 'dashboard') {
+      if (currentUser.portalType === 'teacher') {
+        return <TeacherRoleDashboard />;
+      }
+      if (currentUser.portalType === 'student') {
+        return <StudentRoleDashboard />;
+      }
+      return <AdminRoleDashboard />;
     }
 
-    // 2. Student Portal scope or student submodule
-    if (currentUser.portalType === 'student' || activeModule.startsWith('student-')) {
+    // 2. Student Role Access Control & Strict Isolation
+    if (currentUser.portalType === 'student') {
+      const allowedStudentModules = [
+        'student-classroom',
+        'student-assignments',
+        'student-results',
+        'student-fees',
+        'student-idcard',
+        'student-activity',
+      ];
+      if (allowedStudentModules.includes(activeModule)) {
+        return <StudentPortal />;
+      }
+      // Access Denied for forbidden Admin or Faculty functions
+      return (
+        <AccessDeniedBanner
+          userRole="Student / Learner"
+          userName={currentUser.name}
+          attemptedModule={activeModule}
+          onBackToDashboard={() => setActiveModule('dashboard')}
+        />
+      );
+    }
+
+    // 3. Teacher Role Access Control & Strict Isolation
+    if (currentUser.portalType === 'teacher') {
+      if (activeModule.startsWith('teacher-')) {
+        return <TeacherPortal />;
+      }
+      // Access Denied for forbidden Administrator functions
+      return (
+        <AccessDeniedBanner
+          userRole="Faculty / Teacher"
+          userName={currentUser.name}
+          attemptedModule={activeModule}
+          onBackToDashboard={() => setActiveModule('dashboard')}
+        />
+      );
+    }
+
+    // 4. Administrator Role Scope & Operations
+    if (activeModule.startsWith('teacher-')) {
+      return <TeacherPortal />;
+    }
+    if (activeModule.startsWith('student-')) {
       return <StudentPortal />;
     }
 
-    // 3. Administrator / Unified Operations Portal scope
     switch (activeModule) {
-      case 'dashboard':
-        return <ExecutiveDashboard />;
       case 'preskool-dashboard':
         return <PreskoolIndexDashboard />;
       case 'user-rights':
       case 'rbac':
         return <UserRightsManager />;
       case 'student-admission':
-        return <PreskoolFormCenter />;
       case 'preskool-forms':
-        return <PreskoolFormCenter />;
-      case 'attendance':
-        return <StudentManagementModule />;
       case 'fees':
         return <PreskoolFormCenter />;
+      case 'attendance':
+      case 'students':
+        return <StudentManagementModule />;
       case 'masters':
       case 'master-data':
         return <MasterDataCenter />;
@@ -113,15 +163,12 @@ const AppContent: React.FC = () => {
         return <MarketingAutomationModule />;
       case 'sales':
         return <SalesPaymentsModule />;
-      case 'students':
-      case 'student-portal':
-        return <StudentManagementModule />;
       case 'reports':
         return <ReportsMISModule />;
       case 'settings':
         return <SettingsMasterDataModule />;
       default:
-        return <PreskoolIndexDashboard />;
+        return <AdminRoleDashboard />;
     }
   };
 
