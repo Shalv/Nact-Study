@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import { CASE_STUDIES } from "../data/solutionsData";
 import { MicrosoftLogo, TechIcon, MicrosoftAppBadge } from "./icons/MicrosoftIcons";
+import { RelatedLinks } from "./RelatedLinks";
+import { PageType } from "../types";
 
 const CASE_IMAGES: Record<string, string> = {
   "logistics-global":
@@ -24,10 +26,13 @@ const CASE_TECH_BADGES: Record<string, Array<"business-central" | "copilot" | "p
 };
 
 interface CaseStudiesProps {
+  /** In-app navigation to a related top-level page. */
+  onNavigate?: (page: PageType) => void;
   onOpenContact: () => void;
 }
 
 export const CaseStudies: React.FC<CaseStudiesProps> = ({
+  onNavigate,
   onOpenContact,
 }) => {
   const [selectedCase, setSelectedCase] = useState<string>(CASE_STUDIES[0].id);
@@ -197,6 +202,20 @@ export const CaseStudies: React.FC<CaseStudiesProps> = ({
             </div>
         </motion.div>
       </div>
+
+      {onNavigate && (
+        <RelatedLinks
+          eyebrow="Related"
+          title="Related pages"
+          links={[
+            { label: "Services", sub: "How each engagement is delivered", onClick: () => onNavigate?.("services") },
+            { label: "Industries", sub: "The sectors these programmes run in", onClick: () => onNavigate?.("industries") },
+            { label: "Solutions", sub: "The pillars each case study draws on", onClick: () => onNavigate?.("solutions") },
+            { label: "AI & Agents", sub: "Where agentic AI fits the roadmap", onClick: () => onNavigate?.("ai-agents") },
+            { label: "Contact", sub: "Start a conversation about your programme", onClick: () => onNavigate?.("contact") },
+          ]}
+        />
+      )}
     </section>
   );
 };

@@ -14,14 +14,19 @@ import {
   getIndustryIcon,
 } from "../data/industriesMeta";
 import { DynamicsIcon, MicrosoftLogo, MicrosoftAppBadge } from "./icons/MicrosoftIcons";
+import { RelatedLinks } from "./RelatedLinks";
+import { PageType } from "../types";
 
 interface IndustriesPageProps {
+  /** In-app navigation to a related top-level page. */
+  onNavigate?: (page: PageType) => void;
   onOpenContact: () => void;
   /** Sends the visitor to the industry's own page. Omitted, cards stay tabs. */
   onOpenIndustry?: (id: string) => void;
 }
 
 export const IndustriesPage: React.FC<IndustriesPageProps> = ({
+  onNavigate,
   onOpenContact,
   onOpenIndustry,
 }) => {
@@ -279,6 +284,19 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({
           ))}
         </div>
       </div>
+
+      {onNavigate && (
+        <RelatedLinks
+          eyebrow="Related"
+          title="Related pages"
+          links={[
+            { label: "Services", sub: "Implementation, migration, support and compliance", onClick: () => onNavigate?.("services") },
+            { label: "Solutions", sub: "The capability pillars behind every rollout", onClick: () => onNavigate?.("solutions") },
+            { label: "Case Studies", sub: "How these sectors run on Business Central", onClick: () => onNavigate?.("case-studies") },
+            { label: "AI & Agents", sub: "Copilot and agentic AI for the sector", onClick: () => onNavigate?.("ai-agents") },
+          ]}
+        />
+      )}
     </div>
   );
 };

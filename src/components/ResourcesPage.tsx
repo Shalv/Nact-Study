@@ -26,13 +26,17 @@ import {
   ResourceItem,
   UpcomingUpdateItem,
 } from "../data/resourcesData";
+import { RelatedLinks } from "./RelatedLinks";
+import { PageType } from "../types";
 
 interface ResourcesPageProps {
+  /** In-app navigation to a related top-level page. */
+  onNavigate?: (page: PageType) => void;
   onOpenContact: (interest?: string) => void;
   onNavigateTab?: (tabId: string) => void;
 }
 
-export const ResourcesPage: React.FC<ResourcesPageProps> = ({ onOpenContact }) => {
+export const ResourcesPage: React.FC<ResourcesPageProps> = ({ onOpenContact, onNavigate }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>("all");
   const [selectedPillarFilter, setSelectedPillarFilter] = useState<string>("all");
@@ -660,6 +664,20 @@ export const ResourcesPage: React.FC<ResourcesPageProps> = ({ onOpenContact }) =
           </div>
         </div>
       </section>
+
+      {onNavigate && (
+        <RelatedLinks
+          eyebrow="Related"
+          title="Related pages"
+          links={[
+            { label: "Services", sub: "The full Coreenact service catalogue", onClick: () => onNavigate?.("services") },
+            { label: "Solutions", sub: "Capability pillars and delivery modules", onClick: () => onNavigate?.("solutions") },
+            { label: "Industries", sub: "Sector-specific Dynamics 365 configuration", onClick: () => onNavigate?.("industries") },
+            { label: "Case Studies", sub: "Results from programmes already live", onClick: () => onNavigate?.("case-studies") },
+            { label: "Contact", sub: "Talk to a Business Central specialist", onClick: () => onNavigate?.("contact") },
+          ]}
+        />
+      )}
     </div>
   );
 };

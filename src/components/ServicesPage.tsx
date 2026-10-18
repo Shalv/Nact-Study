@@ -11,8 +11,12 @@ import { SERVICES_CATALOG } from "../data/coreenactData";
 import { SERVICE_MS_APP, getServiceIcon } from "../data/solutionsMeta";
 import { ServiceItem } from "../types";
 import { MicrosoftAppBadge, MicrosoftLogo } from "./icons/MicrosoftIcons";
+import { RelatedLinks } from "./RelatedLinks";
+import { PageType } from "../types";
 
 interface ServicesPageProps {
+  /** In-app navigation to a related top-level page. */
+  onNavigate?: (page: PageType) => void;
   onOpenContact: () => void;
   onNavigateDigitalMarketing?: () => void;
   /** Routes to /services/:slug. Falls back to the inline tab view when absent. */
@@ -20,6 +24,7 @@ interface ServicesPageProps {
 }
 
 export const ServicesPage: React.FC<ServicesPageProps> = ({
+  onNavigate,
   onOpenContact,
   onNavigateDigitalMarketing,
   onOpenService,
@@ -292,6 +297,20 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({
           })}
         </div>
       </div>
+
+      {onNavigate && (
+        <RelatedLinks
+          eyebrow="Related"
+          title="Related pages"
+          links={[
+            { label: "Solutions", sub: "Six pillars covering the whole enterprise ERP arc", onClick: () => onNavigate?.("solutions") },
+            { label: "Industries", sub: "Dynamics 365 pre-configured for your sector", onClick: () => onNavigate?.("industries") },
+            { label: "Case Studies", sub: "Delivery outcomes from live programmes", onClick: () => onNavigate?.("case-studies") },
+            { label: "AI & Agents", sub: "Agentic AI built on the Microsoft stack", onClick: () => onNavigate?.("ai-agents") },
+            { label: "Resources", sub: "Playbooks, guides and checklists", onClick: () => onNavigate?.("resources") },
+          ]}
+        />
+      )}
     </div>
   );
 };

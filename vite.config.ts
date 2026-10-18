@@ -66,6 +66,10 @@ function aistudioMediaPlugin(): Plugin {
 
 export default defineConfig(() => {
   return {
+    // Deploy base. "/" everywhere by default (Vercel, the Node server, the
+    // single-file preview); the GitHub Pages workflow sets VITE_BASE to
+    // "/<repo>/" because a project site is served from a sub-path.
+    base: process.env.VITE_BASE || "/",
     plugins: [react(), tailwindcss(), aistudioMediaPlugin()],
     resolve: {
       alias: {

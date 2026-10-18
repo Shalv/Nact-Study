@@ -688,6 +688,7 @@ export default function App() {
             {/* 6. Enterprise Case Studies */}
             <CaseStudies
               onOpenContact={() => handleOpenContact()}
+              onNavigate={handleSelectPage}
             />
 
             {/* 7. Global Hubs & Delivery Centers */}
@@ -737,6 +738,7 @@ export default function App() {
             onOpenContact={() => handleOpenContact()}
             onNavigateDigitalMarketing={() => handleSelectPage("digital-marketing")}
             onOpenService={handleOpenService}
+            onNavigate={handleSelectPage}
           />
         )}
 
@@ -754,6 +756,7 @@ export default function App() {
           <IndustriesPage
             onOpenContact={() => handleOpenContact()}
             onOpenIndustry={handleOpenIndustry}
+            onNavigate={handleSelectPage}
           />
         )}
 
@@ -773,6 +776,7 @@ export default function App() {
           <ResourcesPage
             onOpenContact={handleOpenContact}
             onNavigateTab={handleNavigate}
+            onNavigate={handleSelectPage}
           />
         )}
 
@@ -840,6 +844,7 @@ export default function App() {
           <div className="pt-8 pb-16">
             <CaseStudies
               onOpenContact={() => handleOpenContact()}
+              onNavigate={handleSelectPage}
             />
           </div>
         )}
