@@ -14,6 +14,7 @@ import {
   getIndustryIcon,
 } from "../data/industriesMeta";
 import { DynamicsIcon, MicrosoftLogo, MicrosoftAppBadge } from "./icons/MicrosoftIcons";
+import { gradStyle } from "../lib/cardStyle";
 
 interface IndustriesPageProps {
   onOpenContact: () => void;
@@ -223,11 +224,12 @@ export const IndustriesPage: React.FC<IndustriesPageProps> = ({
           All Industry Specializations
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {INDUSTRIES_CATALOG.map((ind) => (
+          {INDUSTRIES_CATALOG.map((ind, ii) => (
             <div
               key={ind.id}
               onClick={() => handleCardSelect(ind.id)}
-              className={`rounded-2xl cursor-pointer transition-all duration-300 border text-left overflow-hidden group hover:shadow-lg ${
+              style={gradStyle(ind.color, ii * 0.05)}
+              className={`cx-card rounded-2xl cursor-pointer transition-all duration-300 border text-left overflow-hidden group hover:shadow-lg ${
                 ind.id === selectedIndustryId
                   ? "bg-slate-50 dark:bg-slate-800/80 border-blue-600 dark:border-sky-500 shadow-md ring-2 ring-blue-500/20"
                   : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"

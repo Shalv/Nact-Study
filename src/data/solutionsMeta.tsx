@@ -158,17 +158,14 @@ export const getSolutionItemIcon = (name: string) => {
 };
 
 /** Which Microsoft co-brand badge each service practice carries. */
-export const SERVICE_MS_APP: Record<
-  string,
-  "business-central" | "azure" | "partner" | "teams" | "power-bi"
-> = {
+export const SERVICE_MS_APP: Record<string, string> = {
   "erp-consulting": "business-central",
-  "nav-migration": "azure",
-  "erp-audit": "partner",
-  "global-rollouts": "teams",
-  "india-localization": "business-central",
-  "security-governance": "azure",
-  "managed-services": "partner",
+  "nav-migration": "visual-studio",
+  "erp-audit": "sql",
+  "global-rollouts": "azure",
+  "india-localization": "dynamics",
+  "security-governance": "entra",
+  "managed-services": "teams",
   "digital-marketing": "power-bi",
 };
 

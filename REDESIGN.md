@@ -54,3 +54,74 @@ npm run lint     # tsc --noEmit
 - The full `vite build` was not run here (the sandbox has a 2 GB memory cap that
   Tailwind's WASM compiler exceeds). Run `npm run build` locally to produce the
   production bundle.
+
+## Colour cards (latest pass)
+
+The editorial canvas stays monochrome; colour and motion are carried by the
+cards. Each card is tinted with its own brand gradient (rail, glow, hover
+shadow) and stamped with the **real Microsoft product mark** taken from
+`src/components/icons/MicrosoftIcons.tsx` — Business Central, Copilot, Power BI,
+Power Apps, Power Automate, Fabric, Azure, Teams, Dataverse, Entra, Excel,
+Outlook, SharePoint and the Microsoft four-square.
+
+| File | Change |
+| --- | --- |
+| `src/lib/cardStyle.ts` | New. Resolves a Tailwind gradient string to the CSS custom properties a card reads. |
+| `src/index.css` | `.cx-cards` / `.cx-card` (rail, glow, hover lift, coloured shadow) plus re-tinting of the accent classes inside a card. |
+| `SolutionsGrid.tsx`, `IndustriesPage.tsx`, `AiAgentsPage.tsx`, `AddonsListCard.tsx` | Card containers tagged `cx-card` with their brand gradient. |
+
+The standalone HTML preview carries the fuller version of this: every grid on
+every page — services, solutions, capability items, industries, AI topics,
+add-ons, digital marketing, resources, about and case studies — is a colour card
+with a real Microsoft mark and a staggered entrance.
+
+## One mark per card
+
+Cards no longer repeat a single logo. Every record in the catalogue is mapped to
+the Microsoft (or Coreenact) mark that matches what it actually is — by `id`, not
+by keyword guessing:
+
+| Card | Mark |
+| --- | --- |
+| ERP Implementation | Dynamics 365 Business Central |
+| NAV to Cloud Migration | Visual Studio (C/AL to AL refactoring) |
+| ERP Audit & Health Check | SQL Server |
+| Global ERP Rollouts | Azure |
+| India Localization | Dynamics 365 |
+| Security & Governance | Entra ID |
+| Managed Services | Teams |
+| Digital Marketing | Power BI |
+| Education industry | Coreenact EdCore |
+| Construction industry | SharePoint |
+| HRMS / HR story | Coreenact Payroll |
+| LMS portal | Coreenact 360 |
+
+Verified per grid: services 8/8 distinct, industries 9/9, add-ons 9/9, capability
+items 6/6, resources 6/6, AI topics 20/22 (the two pairs are Word + PowerPoint
+sharing the Microsoft 365 four-square, and the two agent-building topics sharing
+Copilot Studio — both deliberate, because the project ships no Word or PowerPoint
+mark and showing a different product's logo would be worse than repeating).
+
+On the React side `MicrosoftAppBadge` now names any of 30 marks, and
+`SERVICE_MS_APP` / `INDUSTRY_MS_APP` carry the specific choice per record.
+
+## Modern theme (latest pass)
+
+The site now sits on a clean, minimal product surface rather than the earlier
+editorial one.
+
+| | Before | Now |
+| --- | --- | --- |
+| Type | Archivo, whisper-weight 300 display | **Plus Jakarta Sans**, weight 600 display |
+| Hero | #000, square buttons | #050505, particles kept, crisp type |
+| Buttons | 0px radius (Squarespace signature) | 10px soft-rounded |
+| Cards | gradient rail + bloom + light sweep | hairline border, soft shadow, one brand accent along the top |
+| Section bands | warm cream (#f3f0ea) | neutral greys (#fafafa / #f4f4f5) |
+| Motion | 0.5s lift + sheen sweep | 0.2s, translateY(-3px), no sweep |
+
+Kept: the Microsoft product marks on every card (one per record, mapped by id)
+and the particle hero.
+
+Files touched: `src/index.css` (tokens, type, buttons, cards, hero, nav, reveal),
+`index.html` (font), `src/components/Navbar.tsx` (renamed the brand mark class —
+it collided with the card logo tile and was inheriting its background).

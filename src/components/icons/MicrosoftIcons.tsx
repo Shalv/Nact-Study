@@ -1,4 +1,5 @@
 import React from "react";
+import { EducateIcon, Enact360Icon, PayrollIcon } from "./CoreEnactIcons";
 
 /**
  * The official Microsoft "four-square" logo (in use since 2012).
@@ -412,21 +413,7 @@ export const CopilotStudioIcon: React.FC<{ className?: string }> = ({ className 
  * Reusable official Microsoft Application Badge for cards
  */
 export const MicrosoftAppBadge: React.FC<{
-  app:
-    | "business-central"
-    | "copilot"
-    | "power-bi"
-    | "power-automate"
-    | "power-apps"
-    | "azure"
-    | "fabric"
-    | "teams"
-    | "dataverse"
-    | "partner"
-    | "d365-crm"
-    | "customer-insights"
-    | "excel"
-    | "entra";
+  app: string;
   className?: string;
   size?: "sm" | "md";
 }> = ({ app, className = "", size = "sm" }) => {
@@ -501,9 +488,80 @@ export const MicrosoftAppBadge: React.FC<{
       icon: <EntraIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
       bg: "bg-sky-50/95 dark:bg-slate-900/95 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800",
     },
+    "copilot-studio": {
+      name: "Microsoft Copilot Studio",
+      icon: <CopilotStudioIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-violet-50/95 dark:bg-slate-900/95 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800",
+    },
+    dynamics: {
+      name: "Microsoft Dynamics 365",
+      icon: <DynamicsIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-blue-50/95 dark:bg-slate-900/95 text-blue-700 dark:text-sky-300 border-blue-200 dark:border-blue-800",
+    },
+    outlook: {
+      name: "Microsoft Outlook",
+      icon: <OutlookIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-sky-50/95 dark:bg-slate-900/95 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800",
+    },
+    sharepoint: {
+      name: "Microsoft SharePoint",
+      icon: <SharePointIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-teal-50/95 dark:bg-slate-900/95 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800",
+    },
+    onedrive: {
+      name: "Microsoft OneDrive",
+      icon: <OneDriveIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-sky-50/95 dark:bg-slate-900/95 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800",
+    },
+    viva: {
+      name: "Microsoft Viva",
+      icon: <VivaIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-fuchsia-50/95 dark:bg-slate-900/95 text-fuchsia-700 dark:text-fuchsia-300 border-fuchsia-200 dark:border-fuchsia-800",
+    },
+    loop: {
+      name: "Microsoft Loop",
+      icon: <LoopIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-indigo-50/95 dark:bg-slate-900/95 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800",
+    },
+    sql: {
+      name: "Microsoft SQL Server",
+      icon: <SqlServerIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-slate-100/95 dark:bg-slate-900/95 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700",
+    },
+    "visual-studio": {
+      name: "Visual Studio",
+      icon: <VisualStudioIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-violet-50/95 dark:bg-slate-900/95 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800",
+    },
+    "power-platform": {
+      name: "Microsoft Power Platform",
+      icon: <PowerPlatformIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-fuchsia-50/95 dark:bg-slate-900/95 text-fuchsia-700 dark:text-fuchsia-300 border-fuchsia-200 dark:border-fuchsia-800",
+    },
+    microsoft: {
+      name: "Microsoft 365",
+      icon: <MicrosoftLogo className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-slate-100/95 dark:bg-slate-900/95 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700",
+    },
+    educate: {
+      name: "Coreenact EdCore",
+      icon: <EducateIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-emerald-50/95 dark:bg-slate-900/95 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+    },
+    enact360: {
+      name: "Coreenact 360",
+      icon: <Enact360Icon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-rose-50/95 dark:bg-slate-900/95 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800",
+    },
+    payroll: {
+      name: "Coreenact Payroll",
+      icon: <PayrollIcon className={size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"} />,
+      bg: "bg-amber-50/95 dark:bg-slate-900/95 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800",
+    },
   };
 
-  const item = badgeMap[app] || badgeMap["business-central"];
+  const item = (badgeMap as Record<string, { name: string; icon: React.ReactNode; bg: string }>)[app]
+    || badgeMap["business-central"];
 
   return (
     <span

@@ -57,8 +57,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       <header className={`cx-nav${overHero ? " cx-over" : ""}`}>
         <div className="cx-wrap cx-nav-in">
           <div className="cx-brand" onClick={() => go("home")} title="Coreenact home">
-            <img className="cx-logo cx-logo-light" src="/coreenact-logo-light.png" alt="Coreenact Solutions" />
-            <img className="cx-logo cx-logo-dark" src="/coreenact-logo-dark.png" alt="Coreenact Solutions" />
+            <img className="cx-brandmark cx-brandmark-light" src="/coreenact-logo-light.png" alt="Coreenact Solutions" />
+            <img className="cx-brandmark cx-brandmark-dark" src="/coreenact-logo-dark.png" alt="Coreenact Solutions" />
             <span className="cx-sep" />
             <img className="cx-partner" src="/Microsoft-Solutions-Partner.png" alt="Microsoft Solutions Partner" />
           </div>

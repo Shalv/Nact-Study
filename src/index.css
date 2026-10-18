@@ -8,17 +8,17 @@
    ========================================================================= */
 
 @theme {
-  --font-sans: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-heading: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   --color-ink: #0a0a0a;
   --color-ink-soft: #3a3a38;
   --color-paper: #ffffff;
-  --color-cream: #f3f0ea;
-  --color-cream-2: #eae5db;
-  --color-line: #e2ddd2;
-  --color-muted: #6c6a65;
+  --color-cream: #fafafa;
+  --color-cream-2: #f4f4f5;
+  --color-line: #e9e9ec;
+  --color-muted: #6b7280;
   --color-faint: #9d988d;
 }
 
@@ -83,8 +83,8 @@
 }
 
 .cx-btn {
-  display: inline-flex; align-items: center; gap: 10px; padding: 15px 26px;
-  border-radius: 100px; font-size: 14.5px; font-weight: 600; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 10px; padding: 16px 30px;
+  border-radius: 0; font-size: 14px; font-weight: 500; letter-spacing: .01em; white-space: nowrap;
   transition: background .25s ease, color .25s ease, border-color .25s ease;
 }
 .cx-btn svg { width: 15px; height: 15px; transition: transform .3s ease; }
@@ -95,6 +95,8 @@
 .cx-btn-light:hover { background: #e9e6df; }
 .cx-btn-ghost { border: 1px solid #d8d2c5; color: #0a0a0a; }
 .cx-btn-ghost:hover { border-color: #0a0a0a; }
+.cx-hero .cx-btn-ghost, .cx-phero .cx-btn-ghost { border-color: rgba(255,255,255,.22); color: #fff; }
+.cx-hero .cx-btn-ghost:hover, .cx-phero .cx-btn-ghost:hover { border-color: #fff; }
 .cx-ink .cx-btn-ghost { border-color: rgba(255,255,255,.16); color: #fff; }
 .cx-ink .cx-btn-ghost:hover { border-color: #fff; }
 
@@ -183,19 +185,34 @@
 .cx-statrow b { display: block; font-size: clamp(1.9rem, 3vw, 3rem); font-weight: 600; letter-spacing: -.035em; line-height: 1; }
 .cx-statrow span { display: block; margin-top: 10px; font-size: 12.5px; letter-spacing: .06em; color: #6c6a65; }
 
-/* hero */
-.cx-hero { background: #0a0a0a; color: #fff; position: relative; overflow: hidden; padding-top: 150px; padding-bottom: clamp(48px, 7vw, 90px); }
-.cx-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 80% at 78% 8%, rgba(255,255,255,.07), transparent 55%); }
-.cx-hero-in { position: relative; z-index: 2; }
-.cx-hero .cx-eyebrow { color: #a7a5a0; }
-.cx-hero h1 { margin-top: clamp(28px, 4vw, 54px); }
-.cx-hero-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 26px; margin-top: 26px; color: #b9b6b1; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
-.cx-hero-body { display: grid; gap: clamp(28px, 4vw, 64px); margin-top: clamp(30px, 4vw, 54px); }
-@media (min-width: 900px) { .cx-hero-body { grid-template-columns: minmax(0,1fr) minmax(0,.86fr); } }
-.cx-hero .cx-lead { color: #d3d0cb; }
-.cx-hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
-.cx-hero .cx-btn-ghost, .cx-phero .cx-btn-ghost { border-color: rgba(255,255,255,.16); color: #fff; }
-.cx-hero .cx-btn-ghost:hover, .cx-phero .cx-btn-ghost:hover { border-color: #fff; }
+/* hero — Squarespace-style: full-bleed black, canvas particle field,
+   one centred column of monument type (weight 300, tight tracking) */
+.cx-hero { position: relative; overflow: hidden; background: #000; color: #fff;
+  min-height: min(100svh, 960px); display: flex; flex-direction: column; justify-content: flex-end;
+  padding-top: clamp(130px, 17vh, 200px); padding-bottom: clamp(40px, 6vw, 78px); }
+.cx-hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 1; pointer-events: none; }
+.cx-hero-glow { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(58% 46% at 50% 38%, rgba(255,255,255,.09), transparent 72%); }
+.cx-hero-in { position: relative; z-index: 2; width: 100%; }
+.cx-hero-center { max-width: 1180px; margin-inline: auto; text-align: center; }
+.cx-hero h1 { margin: 0; font-weight: 300; letter-spacing: -.045em; line-height: 1.03;
+  font-size: clamp(2.5rem, 7.2vw, 7rem); text-wrap: balance; }
+.cx-hero-attr { margin-top: clamp(16px, 2.2vw, 30px); display: inline-flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: #8f8f8f; font-weight: 500; }
+.cx-hero-attr .cx-dot { width: 4px; height: 4px; border-radius: 50%; background: #4d4d4d; }
+.cx-hero-sub { margin-top: clamp(18px, 2.2vw, 28px); font-size: clamp(1rem, 1.35vw, 1.3rem); color: #dedcd8; font-weight: 400; }
+.cx-hero-copy { margin: clamp(20px, 2.6vw, 34px) auto 0; max-width: 66ch; color: #a6a4a0;
+  font-size: clamp(.97rem, 1.1vw, 1.08rem); line-height: 1.62; }
+.cx-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: clamp(26px, 3vw, 40px); }
+.cx-hero .cx-statrow { margin-top: clamp(46px, 6vw, 84px); }
+
+/* hero entrance: words rise into place, supporting copy fades up after */
+.cx-hero [data-rise] { opacity: 0; transform: translateY(24px); animation: cxHeroUp .85s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d, 0s); }
+.cx-hero h1 .cx-w { display: inline-block; opacity: 0; transform: translateY(40px); animation: cxHeroUp 1s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d, 0s); }
+@keyframes cxHeroUp { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .cx-hero [data-rise], .cx-hero h1 .cx-w { opacity: 1; transform: none; animation: none; }
+}
 
 /* page hero */
 .cx-phero { background: #0a0a0a; color: #fff; padding-top: 150px; padding-bottom: clamp(48px, 6vw, 84px); position: relative; overflow: hidden; }
@@ -217,9 +234,9 @@
 .cx-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; transition: background .35s ease, color .35s ease, border-color .35s ease; background: rgba(255,255,255,.94); backdrop-filter: blur(14px); color: #0a0a0a; border-bottom: 1px solid #e2ddd2; }
 .cx-nav-in { display: flex; align-items: center; justify-content: space-between; gap: 22px; height: 74px; }
 .cx-brand { display: flex; align-items: center; gap: 16px; min-width: 0; cursor: pointer; }
-.cx-brand img.cx-logo { height: 30px; width: auto; }
-.cx-brand img.cx-logo-light { display: none; }
-.cx-brand img.cx-logo-dark { display: block; }
+.cx-brand img.cx-brandmark { height: 30px; width: auto; }
+.cx-brand img.cx-brandmark-light { display: none; }
+.cx-brand img.cx-brandmark-dark { display: block; }
 .cx-brand .cx-sep { width: 1px; height: 26px; background: currentColor; opacity: .18; }
 .cx-brand img.cx-partner { height: 22px; width: auto; opacity: .9; }
 .cx-nav-links { display: none; align-items: center; gap: 2px; }
@@ -233,8 +250,8 @@
 
 /* over the dark home hero */
 .cx-nav.cx-over { background: transparent; backdrop-filter: none; color: #fff; border-bottom-color: transparent; }
-.cx-nav.cx-over .cx-logo-light { display: block; }
-.cx-nav.cx-over .cx-logo-dark { display: none; }
+.cx-nav.cx-over .cx-brandmark-light { display: block; }
+.cx-nav.cx-over .cx-brandmark-dark { display: none; }
 .cx-nav.cx-over img.cx-partner { filter: brightness(0) invert(1); opacity: .72; }
 .cx-nav.cx-over .cx-btn-light { background: #fff; color: #0a0a0a; }
 .cx-nav.cx-over .cx-nav-links a.cx-active { background: rgba(255,255,255,.12); }
@@ -317,3 +334,123 @@
   font-weight: 500 !important; letter-spacing: -.028em !important;
 }
 .font-extrabold, .font-black { font-weight: 600 !important; }
+
+/* =========================================================================
+   COLOUR CARDS — each card is tinted with its own brand gradient, carries a
+   Microsoft product mark, and lifts with a coloured shadow on hover.
+   Placed after the bridge so these rules win.
+   ========================================================================= */
+.cx-cards { display: grid; gap: clamp(14px, 1.6vw, 22px); grid-template-columns: 1fr; }
+@media (min-width: 680px) { .cx-cards--2 { grid-template-columns: repeat(2, 1fr); } .cx-cards--3 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .cx-cards--3 { grid-template-columns: repeat(3, 1fr); } }
+
+.cx-card {
+  position: relative !important;
+  border-radius: 16px !important;
+  isolation: isolate;
+  transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease, border-color .5s ease !important;
+}
+.cx-card::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; z-index: 3;
+  background: var(--grad, linear-gradient(180deg, #000, #666));
+  transform: scaleY(0); transform-origin: top;
+  transition: transform .55s cubic-bezier(.2,.7,.2,1);
+}
+.cx-card::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0;
+  background: radial-gradient(120% 80% at 50% -10%, var(--c1-14, rgba(0,0,0,.06)), transparent 62%);
+  transition: opacity .5s ease;
+}
+.cx-card:hover {
+  transform: translateY(-8px) !important;
+  border-color: transparent !important;
+  box-shadow: 0 26px 54px -26px var(--c1-60, rgba(0,0,0,.4)) !important;
+}
+.cx-card:hover::before { transform: scaleY(1); }
+.cx-card:hover::after { opacity: 1; }
+
+.cx-logo { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 13px;
+  background: #fff; border: 1px solid #e2ddd2; flex: none; }
+.cx-logo svg, .cx-logo img { width: 26px; height: 26px; object-fit: contain; display: block; }
+.cx-k { font-size: 10.5px; letter-spacing: .15em; text-transform: uppercase; font-weight: 700; color: var(--c1, #000); }
+@media (prefers-reduced-motion: reduce) {
+  .cx-card, .cx-card::before, .cx-card::after { transition: none; }
+  .cx-card:hover { transform: none !important; }
+}
+
+/* Let each card's own brand colour back in — the bridge above flattens the
+   legacy accent classes, so re-tint the pieces inside a card. */
+.cx-card [class*="text-blue-"], .cx-card [class*="text-sky-"],
+.cx-card [class*="text-indigo-"], .cx-card [class*="text-cyan-"] { color: var(--c1, #2563eb) !important; }
+.cx-card [class*="text-emerald-"] { color: #059669 !important; }
+.cx-card [class*="bg-blue-600"], .cx-card [class*="bg-\[\#005a9e\]"],
+.cx-card [class*="bg-sky-600"] { background: var(--grad, #000) !important; }
+.cx-card [class*="border-blue-"], .cx-card [class*="border-sky-"] { border-color: var(--c1-35, #d8d2c5) !important; }
+.cx-card [class*="bg-slate-100"] { background: var(--c1-06, #f3f0ea) !important; }
+.cx-card [class*="bg-slate-50"] { background: var(--c1-06, #f7f5f2) !important; }
+.cx-card:hover [class*="hover:bg-slate-100"] { background: var(--c1-06, #f3f0ea) !important; }
+
+/* =========================================================================
+   MODERN THEME — clean minimal product surface: generous white space, crisp
+   type, hairline borders, soft depth, restrained motion. Colour comes from the
+   Microsoft marks and one accent per card.
+   ========================================================================= */
+:root {
+  --cx-ink: #0a0a0a;
+  --cx-muted: #6b7280;
+  --cx-line: #e9e9ec;
+  --cx-shadow-sm: 0 1px 2px rgba(16,24,40,.05);
+  --cx-shadow-lg: 0 18px 40px -20px rgba(16,24,40,.22), 0 2px 6px -2px rgba(16,24,40,.06);
+}
+body { color: #0a0a0a; background: #ffffff; }
+h1, h2, h3, h4, h5 { font-weight: 600; letter-spacing: -.028em; line-height: 1.1; }
+
+.cx-eyebrow { letter-spacing: .14em; font-weight: 600; color: var(--cx-muted); }
+.cx-d1 { font-weight: 600; letter-spacing: -.035em; line-height: 1.03; }
+.cx-d2 { font-weight: 600; letter-spacing: -.032em; line-height: 1.06; }
+.cx-d3 { font-weight: 600; letter-spacing: -.026em; line-height: 1.12; }
+.cx-lead { color: #3f4650; line-height: 1.6; }
+
+.cx-btn { border-radius: 10px !important; padding: 14px 24px; font-weight: 600; font-size: 14.5px;
+  transition: background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease !important; }
+.cx-btn-ink { box-shadow: var(--cx-shadow-sm); }
+.cx-btn-ink:hover { background: #232323; transform: translateY(-1px); }
+.cx-btn-ghost:hover { border-color: #b9b9c0; }
+
+/* cards — hairline, soft depth, one brand accent along the top */
+.cx-card { border-radius: 14px !important; border: 1px solid var(--cx-line) !important;
+  background: #fff; box-shadow: var(--cx-shadow-sm) !important;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important; }
+.cx-card:hover { transform: translateY(-3px) !important; border-color: #dcdce1 !important;
+  box-shadow: var(--cx-shadow-lg) !important; }
+.cx-card::before { left: 0; right: 0; top: 0; bottom: auto; width: auto; height: 3px;
+  transform: none; opacity: .95; }
+.cx-card:hover::before { transform: none; }
+.cx-card::after { display: none; }
+.cx-logo { width: 44px; height: 44px; border-radius: 11px; background: #fafafa; border: 1px solid var(--cx-line); }
+.cx-k { letter-spacing: .12em; font-weight: 700; }
+.cx-cards { gap: clamp(14px, 1.6vw, 20px); }
+
+/* hero — keep the particles, crisp modern type over them */
+.cx-hero { background: #050505; }
+.cx-hero h1 { font-weight: 600 !important; letter-spacing: -.04em; line-height: 1.02; }
+.cx-hero-attr { letter-spacing: .14em; color: #8a8f98; font-weight: 600; }
+.cx-hero-sub { color: #e4e4e7; }
+.cx-hero-copy { color: #a1a1aa; }
+.cx-hero .cx-statrow { background: rgba(255,255,255,.12) !important; border-color: rgba(255,255,255,.12) !important;
+  border-radius: 14px; overflow: hidden; }
+.cx-hero .cx-st { background: #050505 !important; }
+.cx-phero { background: #050505; }
+.cx-phero h1 { font-weight: 600; letter-spacing: -.04em; }
+
+/* nav */
+.cx-nav.scrolled { background: rgba(255,255,255,.86); backdrop-filter: blur(16px) saturate(1.6); border-bottom-color: var(--cx-line); }
+.cx-nav-links a { border-radius: 8px; }
+.cx-nav.scrolled .cx-nav-links a.cx-active { background: #f4f4f5; }
+.cx-nav-cta .cx-btn { border-radius: 10px !important; }
+
+/* restrained scroll reveal */
+.fadeup, .cx-fadeup { transition: opacity .55s cubic-bezier(.22,.61,.36,1), transform .55s cubic-bezier(.22,.61,.36,1) !important; }
+@media (prefers-reduced-motion: reduce) {
+  .cx-card:hover, .cx-btn:hover { transform: none !important; }
+}
