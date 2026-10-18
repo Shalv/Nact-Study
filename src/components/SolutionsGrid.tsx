@@ -27,7 +27,6 @@ import {
   getSolutionItemIcon,
   solutionItemSlug,
 } from "../data/solutionsMeta";
-import { gradStyle } from "../lib/cardStyle";
 
 interface SolutionsGridProps {
   onSelectSolution: (solutionTitle: string) => void;
@@ -103,15 +102,14 @@ export const SolutionsGrid: React.FC<SolutionsGridProps> = ({
 
         {/* Pillars Showcase with Images */}
         <div className="space-y-16">
-          {currentPillars.map((pillar, pi) => {
+          {currentPillars.map((pillar) => {
             const bannerImage = PILLAR_BANNER_IMAGES[pillar.id] || PILLAR_BANNER_IMAGES["run-transform"];
             const isFourCards = pillar.items.length === 4;
 
             return (
               <div
                 key={pillar.id}
-                className="cx-card rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden"
-                style={gradStyle(pillar.color, pi * 0.06)}
+                className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden"
               >
                 {/* Pillar Hero Banner with Increased Height */}
                 <div className="h-64 sm:h-80 md:h-[380px] w-full relative overflow-hidden bg-slate-900 group">

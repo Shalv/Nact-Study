@@ -1,10 +1,12 @@
 import React from "react";
+import { ArrowRight } from "lucide-react";
 import { PageType } from "../types";
 import { COREENACT_CONTACT } from "../data/coreenactData";
 
 interface FooterProps {
   /** A page name or a catalog detail path such as /services/erp-audit. */
   onNavigate?: (target: PageType | string) => void;
+  onOpenContact?: () => void;
 }
 
 const PRACTICE: Array<[PageType, string]> = [
@@ -23,8 +25,12 @@ const COMPANY: Array<[PageType, string]> = [
   ["privacy-policy", "Privacy Policy"],
 ];
 
-/** Editorial footer: brand, three link columns, offices, legal bar. */
-export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+/**
+ * Logic-style footer: a near-black canvas, an oversized Anton call to action
+ * flecked with lime shapes, then brand, three link columns, offices and a
+ * legal bar.
+ */
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenContact }) => {
   const go = (page: PageType) => {
     onNavigate?.(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -35,6 +41,24 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   return (
     <footer className="cx-foot">
       <div className="cx-wrap">
+        <div className="cx-foot-cta">
+          <div className="cx-foot-shapes" aria-hidden>
+            <span /><span /><span /><span />
+          </div>
+          <h2>
+            Let&rsquo;s build your
+            <br />
+            intelligent core<span className="cx-underscore">_</span>
+          </h2>
+          <p>
+            Tell us where the business needs to get to. We&rsquo;ll map the Dynamics 365
+            Business Central, data and AI path to get you there — and stay with you once it is live.
+          </p>
+          <button className="cx-btn cx-btn-primary" onClick={() => (onOpenContact ? onOpenContact() : go("contact"))}>
+            Book a consultation <ArrowRight />
+          </button>
+        </div>
+
         <div className="cx-foot-top">
           <div className="cx-foot-brand">
             <img src="/coreenact-logo-light.png" alt="Coreenact Solutions" />
@@ -43,8 +67,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               delivery hubs in Haryana, India and Mississauga, Canada.
             </p>
             <div className="cx-pillrow cx-mt-m">
-              <span className="cx-pill cx-ink">{c.email}</span>
-              <span className="cx-pill cx-ink">{c.phone}</span>
+              <span className="cx-pill">{c.email}</span>
+              <span className="cx-pill">{c.phone}</span>
             </div>
           </div>
 

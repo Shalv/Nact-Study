@@ -12,10 +12,10 @@ interface NavbarProps {
 }
 
 /**
- * Editorial navigation. A single solid paper bar that turns transparent over the
- * dark home hero and back to paper once the visitor scrolls. The previous
- * utility strip, theme switcher and gradient pill nav are gone: the redesign is
- * one light theme with a monochrome canvas.
+ * Logic-style navigation. A fixed bar that floats fully transparent over the
+ * near-black home hero and settles into a solid black bar with the acid-lime
+ * call to action everywhere else. Links are pills; the active page is marked in
+ * lime. The old utility strip, theme switcher and gradient pill nav are gone.
  */
 const NAV: Array<{ id: PageType; label: string }> = [
   { id: "solutions", label: "Solutions" },
@@ -57,8 +57,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       <header className={`cx-nav${overHero ? " cx-over" : ""}`}>
         <div className="cx-wrap cx-nav-in">
           <div className="cx-brand" onClick={() => go("home")} title="Coreenact home">
-            <img className="cx-brandmark cx-brandmark-light" src="/coreenact-logo-light.png" alt="Coreenact Solutions" />
-            <img className="cx-brandmark cx-brandmark-dark" src="/coreenact-logo-dark.png" alt="Coreenact Solutions" />
+            <img className="cx-logo cx-logo-light" src="/coreenact-logo-light.png" alt="Coreenact Solutions" />
+            <img className="cx-logo cx-logo-dark" src="/coreenact-logo-dark.png" alt="Coreenact Solutions" />
             <span className="cx-sep" />
             <img className="cx-partner" src="/Microsoft-Solutions-Partner.png" alt="Microsoft Solutions Partner" />
           </div>
@@ -76,7 +76,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           <div className="cx-nav-cta">
-            <button className="cx-btn cx-btn-light" onClick={() => onOpenContact()}>
+            <button className="cx-btn cx-btn-primary" onClick={() => onOpenContact()}>
               Book a consultation <ArrowRight />
             </button>
           </div>
@@ -91,11 +91,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         {NAV.map((n) => (
           <a key={n.id} onClick={() => go(n.id)}>
             {n.label}
-            <ArrowUpRight size={18} />
+            <ArrowUpRight size={20} />
           </a>
         ))}
         <div className="cx-drawer-foot">
-          <button className="cx-btn cx-btn-ink" onClick={() => { setOpen(false); onOpenContact(); }}>
+          <button className="cx-btn cx-btn-primary" onClick={() => { setOpen(false); onOpenContact(); }}>
             Book a consultation <ArrowRight />
           </button>
         </div>

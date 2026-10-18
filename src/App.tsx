@@ -20,6 +20,7 @@ import {
   PAGE_TITLES,
   addonPath,
   aiTopicPath,
+  currentPath,
   enquiryPath,
   industryPath,
   initialPageFromLocation,
@@ -597,7 +598,7 @@ export default function App() {
             stacking on top of it, so a stale link never shows home content
             underneath a not-found message. */}
         {isNotFound ? (
-          <NotFoundPage pathname={window.location.pathname} onNavigate={handleSelectPage} />
+          <NotFoundPage pathname={currentPath()} onNavigate={handleSelectPage} />
         ) : (
           <>
         {currentPage === "home" && (
@@ -617,7 +618,7 @@ export default function App() {
                     <h2 className="cx-d2 cx-mt-m">
                       More possibilities.
                       <br />
-                      Always your control.
+                      Always your control<span className="cx-underscore">_</span>
                     </h2>
                   </div>
                   <div>
@@ -850,6 +851,7 @@ export default function App() {
       {/* Dark Footer as requested */}
       <Footer
         onNavigate={handleNavigate}
+        onOpenContact={() => handleOpenContact()}
       />
 
       {/* Floating Action Button for Add-on Suite */}

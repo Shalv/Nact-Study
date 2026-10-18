@@ -31,13 +31,16 @@ export const INDUSTRY_IMAGES: Record<string, string> = {
   distribution: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1400&q=80",
 };
 
-export const INDUSTRY_MS_APP: Record<string, string> = {
+export const INDUSTRY_MS_APP: Record<
+  string,
+  "business-central" | "power-bi" | "copilot" | "teams" | "power-apps" | "azure" | "dataverse" | "power-automate"
+> = {
   manufacturing: "business-central",
   fmcg: "power-bi",
-  retail: "power-apps",
-  education: "educate",
+  retail: "business-central",
+  education: "business-central",
   "professional-services": "teams",
-  construction: "sharepoint",
+  construction: "power-apps",
   "maritime-logistics": "azure",
   healthcare: "dataverse",
   distribution: "power-automate",

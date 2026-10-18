@@ -38,7 +38,6 @@ import {
   COPILOT_TOPIC_DETAILS,
   COPILOT_RELATED_STORIES,
 } from "../data/copilotTopics";
-import { gradStyle, palette } from "../lib/cardStyle";
 
 interface AiAgentsPageProps {
   onOpenContact: (initialInterest?: string) => void;
@@ -425,14 +424,13 @@ export const AiAgentsPage: React.FC<AiAgentsPageProps> = ({
 
           {/* Cards Grid - NO SEQUENCING NUMBERS ANYWHERE */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTopics.map((topic, ti) => {
+            {filteredTopics.map((topic) => {
               const isExpanded = !!expandedCards[topic.id];
 
               return (
                 <div
                   key={topic.id}
-                  style={gradStyle(palette(ti), ti * 0.04)}
-                  className="cx-card rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs hover:shadow-xl hover:border-blue-500/50 transition-all flex flex-col justify-between group"
+                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs hover:shadow-xl hover:border-blue-500/50 transition-all flex flex-col justify-between group"
                 >
                   {/* Top Image Banner */}
                   <div

@@ -15,7 +15,6 @@ import {
   Layers,
 } from "lucide-react";
 import { BusinessCentralIcon, MicrosoftLogo } from "./icons/MicrosoftIcons";
-import { gradStyle, palette } from "../lib/cardStyle";
 
 interface AddonsListCardProps {
   onSelectAddon?: (addon: AddonItem) => void;
@@ -104,7 +103,7 @@ export const AddonsListCard: React.FC<AddonsListCardProps> = ({
 
       {/* Grid of Addons (2-columns on sm, 1-col on mobile) */}
       <div className="p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[65vh] sm:max-h-[500px] overflow-y-auto">
-        {ADDONS_LIST.map((addon, ai) => (
+        {ADDONS_LIST.map((addon) => (
           <button
             key={addon.id}
             onClick={() => {
@@ -114,8 +113,7 @@ export const AddonsListCard: React.FC<AddonsListCardProps> = ({
                 onOpenConsultation(addon.name);
               }
             }}
-            style={gradStyle(palette(ai))}
-            className="cx-card group w-full text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 transition flex items-start gap-2.5 cursor-pointer shadow-2xs"
+            className="group w-full text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 transition flex items-start gap-2.5 cursor-pointer shadow-2xs"
             title={`View details for ${addon.name}`}
           >
             {/* Module Icon Tile */}

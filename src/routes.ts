@@ -155,8 +155,38 @@ export const parseRoute = (pathname: string, search = ""): Route => {
   return { kind: "unknown", pathname: path };
 };
 
+const hashRouterEnabled = (): boolean =>
+  typeof window !== "undefined" &&
+  Boolean((window as unknown as { __COREENACT_HASH_ROUTER__?: boolean }).__COREENACT_HASH_ROUTER__);
+
+/**
+ * The address the router should read. On the deployed site this is the real
+ * pathname. In the single-file review preview (opened straight from disk) there
+ * is no server to resolve paths, so the preview build flips a flag and the route
+ * is carried in the location hash instead.
+ */
+export const currentPath = (): string => {
+  if (typeof window === "undefined") return "/";
+  if (hashRouterEnabled()) {
+    const raw = window.location.hash.replace(/^#/, "") || "/";
+    const q = raw.indexOf("?");
+    return q === -1 ? raw : raw.slice(0, q);
+  }
+  return window.location.pathname;
+};
+
+const currentSearch = (): string => {
+  if (typeof window === "undefined") return "";
+  if (hashRouterEnabled()) {
+    const raw = window.location.hash.replace(/^#/, "");
+    const q = raw.indexOf("?");
+    return q === -1 ? "" : raw.slice(q);
+  }
+  return window.location.search;
+};
+
 export const routeFromLocation = (): Route =>
-  parseRoute(window.location.pathname, window.location.search);
+  parseRoute(currentPath(), currentSearch());
 
 /**
  * The nav-highlighted page a route belongs to. Detail pages report their
