@@ -403,14 +403,36 @@
 .cx-tagrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
 .cx-tag { font-size: 12px; letter-spacing: .03em; color: #4a4a4a; border: 1px solid #dedede; border-radius: 2em; padding: 5px 12px; }
 
-/* pillar list */
-.cx-plist { border-top: 1px solid #e4e4e4; }
-.cx-prow { display: grid; grid-template-columns: auto 1fr auto; gap: clamp(16px, 3vw, 40px); align-items: baseline; padding: clamp(22px, 3vw, 34px) 0; border-bottom: 1px solid #e4e4e4; background: none; transition: padding .3s ease, color .2s ease; }
-.cx-prow:hover { padding-left: 12px; }
-.cx-prow:hover .cx-ptitle { color: #101010; }
-.cx-pnum { font-size: 12.5px; letter-spacing: .12em; color: #9a9a9a; font-weight: 600; padding-top: 10px; font-variant-numeric: tabular-nums; }
-.cx-ptitle { font-family: var(--font-heading); font-weight: 400; text-transform: uppercase; letter-spacing: .015em; font-size: clamp(1.35rem, 2.3vw, 2.1rem); line-height: 1.02; }
-.cx-psub { margin-top: 10px; color: #6b6b6b; font-size: 15px; max-width: 62ch; }
+/* ============================ solution pillars ============================ */
+/* Image-led card grid: banner, running index in lime, badge, title, count. */
+.cx-pillars { display: grid; gap: clamp(18px, 2vw, 28px); grid-template-columns: 1fr; }
+@media (min-width: 700px) { .cx-pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1080px) { .cx-pillars { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.cx-pillar {
+  display: flex; flex-direction: column; padding: 0; text-align: left; overflow: hidden;
+  font-family: var(--font-sans); color: inherit; cursor: pointer;
+  background: #fff; border: 1px solid #e4e4e4; border-radius: 18px;
+  transition: border-color .25s ease, transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s ease;
+}
+.cx-pillar:hover { border-color: #101010; transform: translateY(-4px); box-shadow: 0 26px 54px rgba(16,16,16,.12); }
+.cx-pillar:focus-visible { outline: 2px solid #c8db53; outline-offset: 3px; }
+
+.cx-pillar-media { position: relative; display: block; aspect-ratio: 16 / 10; background: #101010; overflow: hidden; }
+.cx-pillar-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2,.7,.2,1); }
+.cx-pillar:hover .cx-pillar-media img { transform: scale(1.06); }
+/* scrim so the lime index and the badge stay legible over any banner */
+.cx-pillar-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(16,16,16,.10) 28%, rgba(16,16,16,.74)); }
+.cx-pillar-num { position: absolute; left: 18px; top: 12px; z-index: 2; font-family: var(--font-heading); font-weight: 400; font-size: 1.7rem; line-height: 1; letter-spacing: .02em; color: #c8db53; font-variant-numeric: tabular-nums; }
+.cx-pillar-badge { position: absolute; right: 14px; top: 14px; z-index: 2; font-size: 10.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: rgba(16,16,16,.5); border: 1px solid rgba(255,255,255,.28); border-radius: 2em; padding: 5px 11px; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+
+.cx-pillar-body { display: flex; flex-direction: column; gap: 8px; padding: 22px 22px 20px; }
+.cx-pillar-title { display: block; font-family: var(--font-heading); font-weight: 400; text-transform: uppercase; letter-spacing: .015em; font-size: clamp(1.2rem, 1.7vw, 1.55rem); line-height: 1.04; color: #101010; }
+.cx-pillar-sub { display: block; color: #6b6b6b; font-size: 14.5px; line-height: 1.5; }
+.cx-pillar-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding-top: 14px; border-top: 1px solid #ececec; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #8a8a8a; }
+.cx-pillar-arrow { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 34px; height: 34px; border-radius: 2em; border: 1px solid #dedede; color: #101010; transition: background .25s ease, border-color .25s ease, transform .25s ease; }
+.cx-pillar-arrow svg { width: 15px; height: 15px; }
+.cx-pillar:hover .cx-pillar-arrow { background: #c8db53; border-color: #c8db53; transform: translateX(3px); }
 
 /* steps */
 .cx-steps { border-top: 1px solid #e4e4e4; }

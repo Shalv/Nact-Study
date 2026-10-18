@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
+import { SolutionPillars } from "./components/SolutionPillars";
 import { SolutionsGrid } from "./components/SolutionsGrid";
 import { CaseStudies } from "./components/CaseStudies";
 import { GlobalHubs } from "./components/GlobalHubs";
@@ -36,7 +37,6 @@ import {
 import { NotFoundPage } from "./components/NotFoundPage";
 import {
   ArrowLeft,
-  ArrowUpRight,
   Briefcase,
   Factory,
   Info,
@@ -609,47 +609,8 @@ export default function App() {
               onOpenContact={() => handleOpenContact()}
             />
 
-            {/* Solution pillars — editorial numbered list */}
-            <section id="solutions" className="cx-section">
-              <div className="cx-wrap">
-                <div className="cx-split cx-split-top">
-                  <div>
-                    <span className="cx-eyebrow">Solution pillars</span>
-                    <h2 className="cx-d2 cx-mt-m">
-                      More possibilities.
-                      <br />
-                      Always your control<span className="cx-underscore">_</span>
-                    </h2>
-                  </div>
-                  <div>
-                    <p className="cx-lead">
-                      Six pillars cover the full arc of an enterprise ERP programme — core
-                      operations, data and insight, global scale, governance, agentic AI and a
-                      flagship education platform.
-                    </p>
-                  </div>
-                </div>
-                <div className="cx-plist cx-mt-l">
-                  {SOLUTION_PILLARS.map((p, i) => (
-                    <button
-                      key={p.id}
-                      className="cx-prow"
-                      style={{ width: "100%", textAlign: "left" }}
-                      onClick={() => handleOpenSolution(p.id)}
-                    >
-                      <span className="cx-pnum">{String(i + 1).padStart(2, "0")}</span>
-                      <span>
-                        <span className="cx-ptitle" style={{ display: "block" }}>{p.title}</span>
-                        <span className="cx-psub" style={{ display: "block" }}>{p.subtitle}</span>
-                      </span>
-                      <span style={{ color: "#9d988d", alignSelf: "center" }} aria-hidden>
-                        <ArrowUpRight size={18} />
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </section>
+            {/* Solution pillars — image-led card grid */}
+            <SolutionPillars onOpenPillar={handleOpenSolution} />
 
             {/* 2. Enterprise Solutions & EdCore */}
             <SolutionsGrid
