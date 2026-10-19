@@ -1,18 +1,10 @@
 import React from "react";
 import { ArrowRight } from "lucide-react";
-import { HeroStone } from "./HeroStone";
 
 interface HeroProps {
   onOpenCalculator?: () => void;
   onOpenContact: (interest?: string) => void;
-}
-
-const SPECIALISMS = [
-  "Dynamics 365 Business Central",
-  "NAV to Cloud Migration",
-  "India GST Localization",
-  "24/7 Managed Support",
-];
+};
 
 const STACK: Array<[string, string]> = [
   ["/logos/dynamics-365-business-central.png", "Dynamics 365 Business Central"],
@@ -25,63 +17,67 @@ const STACK: Array<[string, string]> = [
   ["/logos/microsoft-outlook.png", "Microsoft Outlook"],
 ];
 
+const HERO_BG = "/images/enterprise_consulting_team_1790047798645.jpg";
+
 /**
- * Hero — centred, with a rotating 3D stone behind it.
+ * Hero — built to the roomandpillar.com home hero.
  *
- * Restructured from the left-aligned layout: the composition is now centred on
- * the near-black canvas, and the hero's subject is the stone itself — a low-poly
- * rock turning slowly behind the type, lit by a lime rim so it reads as the
- * "intelligent core" the headline promises. A soft radial scrim sits between the
- * stone and the copy so the headline stays legible while the rock's silhouette
- * and glow show around it. The specialisms run as a bottom bar, and the proof
- * points + Microsoft stack follow in a strip below.
+ * A full-viewport band: a photographic background washed in deep blue (#075986)
+ * with a dot field over it, and a single left-aligned copy column capped at
+ * 650px — a large, light, sentence-case heading; a short yellow (#fff200) dash
+ * beneath it; a 22px light paragraph; a row of chips; and a pill CTA. The
+ * Microsoft stack marquee and the proof-point row sit in a strip under it.
+ *
+ * The heading deliberately drops the theme's uppercase Anton treatment: the
+ * reference sets its hero in a light sentence-case sans, and the hero reads
+ * wrong in condensed caps.
  */
 export const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
   return (
     <>
       <section className="cx-hero">
-        <div className="cx-hero-stone" aria-hidden>
-          <HeroStone className="cx-hero-stone-canvas" />
-        </div>
-        <div className="cx-hero-scrim" aria-hidden />
+        <div
+          className="cx-hero-media"
+          aria-hidden
+          style={{ backgroundImage: `url("${HERO_BG}")` }}
+        />
+        <div className="cx-hero-pattern" aria-hidden />
 
         <div className="cx-wrap cx-hero-in">
-          <span className="cx-pill cx-hero-tag">Official Microsoft Solutions Partner</span>
+          <div className="cx-hero-copy">
+            <h1 className="cx-hero-title">
+              Converting enterprise complexity into an intelligent core
+            </h1>
 
-          <h1 className="cx-d1 cx-hero-h1">
-            Enterprise complexity,
-            <br />
-            converted into an intelligent core<span className="cx-underscore">_</span>
-          </h1>
+            <span className="cx-hero-dash" aria-hidden />
 
-          <p className="cx-hero-lead">
-            Enterprise Microsoft Solutions Partner specialising in Dynamics 365 Business Central
-            implementations, NAV-to-Cloud migrations, India GST localisation, agentic AI on the
-            Microsoft stack, and 24/7 managed support.
-          </p>
+            <p className="cx-hero-sub">
+              A Microsoft Solutions Partner specialising in Dynamics 365 Business Central
+              implementations, NAV-to-Cloud migrations, India GST localisation, agentic AI on the
+              Microsoft stack and 24/7 managed support.
+            </p>
 
-          <div className="cx-hero-cta">
-            <button className="cx-btn cx-btn-primary" onClick={() => onOpenContact()}>
-              Book a consultation <ArrowRight />
-            </button>
-            <a
-              className="cx-btn cx-btn-ghost"
-              href="#solutions"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById("solutions")?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              Explore solutions <ArrowRight />
-            </a>
-          </div>
-        </div>
+            <div className="cx-hero-chips">
+              <span className="cx-hero-chip">Dynamics 365 Business Central</span>
+              <span className="cx-hero-chip">Agentic AI on the Microsoft Cloud</span>
+              <span className="cx-hero-chip">24/7 Managed Support</span>
+            </div>
 
-        <div className="cx-hero-foot">
-          <div className="cx-wrap cx-hero-foot-in">
-            {SPECIALISMS.map((s) => (
-              <span key={s} className="cx-hero-foot-item">{s}</span>
-            ))}
+            <div className="cx-hero-actions">
+              <button className="cx-hero-cta" onClick={() => onOpenContact()}>
+                Book a consultation
+              </button>
+              <a
+                className="cx-hero-ghost"
+                href="#solutions"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById("solutions")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                Explore solutions <ArrowRight />
+              </a>
+            </div>
           </div>
         </div>
       </section>
